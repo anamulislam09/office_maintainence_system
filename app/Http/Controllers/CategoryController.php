@@ -15,7 +15,8 @@ class CategoryController extends Controller
 
     public function create() 
     {
-        $data = Category::get();
+        // $data = Category::get();
+        $data = Category::with('subcategoris')->where('main_cat_id', null)->orderBy('id', 'desc')->get();
         return view('admin.categories.create', compact('data'));
     }
 

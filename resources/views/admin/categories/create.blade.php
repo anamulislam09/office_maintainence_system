@@ -37,7 +37,7 @@
                                             <label>Main Category</label>
                                             <select name="main_cat_id" id="" class="form-control">
                                                 <option value="" selected disabled>Select Once</option>
-                                                @foreach ($data as $item)
+                                                {{-- @foreach ($data as $item)
                                                     @if ($item->main_cat_id == !'')
                                                         <option value="{{ $item->id }}">&nbsp; &nbsp; &nbsp;
                                                             &nbsp;----{{ $item->name }}
@@ -45,6 +45,14 @@
                                                     @else
                                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                                     @endif
+                                                @endforeach --}}
+
+                                                @foreach ($data as $main_cat)
+                                                    <option value="{{ $main_cat->id }}">{{ $main_cat->name }}</option>
+                                                    @foreach ($main_cat->subcategoris as $subcat)
+                                                        <option value="{{ $subcat->id }}">
+                                                            &nbsp;&rightarrow;{{ $subcat->name }}</option>
+                                                    @endforeach
                                                 @endforeach
                                             </select>
                                         </div>

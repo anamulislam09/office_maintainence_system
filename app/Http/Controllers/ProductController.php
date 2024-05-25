@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Office;
 use App\Models\Product;
+use App\Models\ProductAllocate;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -22,16 +23,11 @@ class ProductController extends Controller
         } elseif (Auth::guard('admin')->user()->office_id == 1) {
             $products = Product::orderBy('id', 'desc')->get();
             return view('admin.products.product.index', compact('products'));
-        } elseif((Auth::guard('admin')->user()->office_id !== 0) && (Auth::guard('admin')->user()->office_id !== 1)) {
-
-            // $office = Office::where('id', Auth::guard('admin')->user()->office_id)->orderBy('id', 'desc')->get();
-            // // dd($office);
-            // $data = Office::where('id', $office->zonal_office_id)->get();
-            // dd($data);
-
-            $products = Product::orderBy('id', 'desc')->get();
+        } elseif ((Auth::guard('admin')->user()->office_id !== 0) && (Auth::guard('admin')->user()->office_id !== 1)) {
+            $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->get();
+            $productIds = $assignments->pluck('product_id'); // Get the list of product_ids
+            $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
             return view('admin.products.product.index', compact('products'));
-            
         }
     }
 

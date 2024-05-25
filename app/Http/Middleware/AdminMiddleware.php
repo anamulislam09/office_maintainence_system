@@ -13,7 +13,7 @@ class AdminMiddleware
     {
         if(!Auth::guard('admin')->check())
         {
-            return redirect('/admin/login')->with('error','Please Login First...');
+            return redirect('/')->with('error','Please Login First...');
         }
         
         if(Auth::guard('admin')->user()->type != 'superadmin'){
