@@ -25,12 +25,12 @@ class ProductStatusController extends Controller
             $productStatus = ProductStatus::where('office_id', Auth::guard('admin')->user()->office_id)->orderBy('id', 'desc')->get();
             // return view('admin.products.product_status.index', compact('productStatus'));
         }
-            return view('admin.products.product_status.index', compact('productStatus'));
+        return view('admin.products.product_status.index', compact('productStatus'));
     }
 
     public function create()
     {
-        $categories = Category::where('main_cat_id', null)->where('status',1)->get();
+        $categories = Category::where('main_cat_id', null)->where('status', 1)->get();
         return view('admin.products.product_status.create', compact('categories'));
     }
 
@@ -38,38 +38,43 @@ class ProductStatusController extends Controller
     {
         $cat_id = $request->cat_id;
 
-        if($cat_id){
+        if ($cat_id) {
             $products = ProductAllocate::join('products', 'product_allocates.product_id', '=', 'products.id')
-                            ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)
-                            // ->where('product_allocates.office_id', 1)
-                            ->where('products.cat_id',$cat_id)
-                            ->select('product_allocates.*', 'products.*')
-                            ->get();
-        }else{
+                ->join('categories', 'products.sub_cat_id', '=', 'categories.id')
+                ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)->where('location', 1)
+                ->where('products.cat_id', $cat_id)
+                ->select('product_allocates.*', 'products.*', 'categories.name as cat_name')
+                ->get();
+        } else {
             $products = ProductAllocate::join('products', 'product_allocates.product_id', '=', 'products.id')
-                            ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)
-                            // ->where('product_allocates.office_id', 1)
-                            ->select('product_allocates.*', 'products.*')
-                            ->get();
+                ->join('categories', 'products.sub_cat_id', '=', 'categories.id')
+                ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)->where('location', 1)
+                ->select('product_allocates.*', 'products.*', 'categories.name as cat_name')
+                ->get();
         }
 
-        return response()->json($products,200);
+        return response()->json($products, 200);
     }
 
     public function Store(Request $request)
     {
         $admin = Admin::with('role')->where('id', Auth::guard('admin')->user()->id)->first();
         $data = $request->all();
-        for ($i = 0; $i < count($data['product_id']); $i++) {
-
-            ProductStatus::insert([
-                'product_id' => $data['product_id'][$i],
-                'office_id' => $data['office_id'][$i],
-                'status' => $data['status'][$i],
-                'created_date' => date('Y-m-d h:i:s'),
-                'created_by' => $admin->role->role,
-            ]);
+        // dd($data['product_id']);
+        if (!empty($data['product_id'])) {
+            for ($i = 0; $i < count($data['product_id']); $i++) {
+                ProductStatus::insert([
+                    'product_id' => $data['product_id'][$i],
+                    'office_id' => $data['office_id'][$i],
+                    'status' => $data['status'][$i],
+                    'created_date' => date('Y-m-d h:i:s'),
+                    'created_by' => $admin->role->role,
+                ]);
+            }
+        }else{
+            return redirect()->back()->with('alert', ['messageType' => 'danger', 'message' => 'Product Not Found!']);
         }
+
         return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Product status updated successfully!']);
     }
 

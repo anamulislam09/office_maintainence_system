@@ -138,12 +138,8 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         
         //    Trtansfer Request route start here ---->
         Route::get('/receive-request/all', [ReceiveRequestController::class, 'index'])->name('receive-request.index');
-        // Route::get('/receive-request/create', [ReceiveRequestController::class, 'create'])->name('receive-request.create');
-        // Route::post('/receive-request/store', [ReceiveRequestController::class, 'store'])->name('receive-request.store');
-        // Route::get('/receive-request/show/{id}', [ReceiveRequestController::class, 'show'])->name('transfer-request.show');
-        Route::get('/receive-request/edit/{id}', [ReceiveRequestController::class, 'edit'])->name('receive-request.edit');
-        Route::post('/receive-request/update', [ReceiveRequestController::class, 'update'])->name('receive-request.update');
-        Route::delete('/receive-request/delete/{id}', [ReceiveRequestController::class, 'destroy'])->name('receive-request.destroy');
+        Route::get('/receive-request/accept/{id}', [ReceiveRequestController::class, 'update'])->name('receive-request.accept');
+        Route::get('/receive-request/cancel/{id}', [ReceiveRequestController::class, 'cancel'])->name('receive-request.cancel');
 
 
         //    Trtansfer Request route ends here ---->

@@ -13,7 +13,7 @@ class ProductAllocateController extends Controller
     {
         // $assign_products = ProductAllocate::orderBy('id', 'desc')->get();
         $assignments = ProductAllocate::join('products', 'product_allocates.product_id', '=', 'products.id')
-            ->join('offices', 'product_allocates.office_id', '=', 'offices.id')
+            ->join('offices', 'product_allocates.office_id', '=', 'offices.id')->where('product_allocates.location', '!=', 4)
             ->select('product_allocates.*', 'products.name as product_name', 'offices.title as office_name', 'offices.head_office_id as head_office_id',  'offices.zonal_office_id as zonal_office_id')
             ->get();
 
@@ -24,7 +24,6 @@ class ProductAllocateController extends Controller
     {
         $products = Product::where('isassign', 0)->orderBy('id', 'desc')->get();
         $offices = Office::where('head_office_id', '')->get();
-        // $offices = Office::where('head_office_id', !null)->where('zonal_office_id', '')->get();
         return view('admin.products.product_allocate.create', compact('products', 'offices'));
     }
 
@@ -32,7 +31,7 @@ class ProductAllocateController extends Controller
     {
         $data['product_id'] = $request->product_id;
         $data['office_id'] = $request->office_id;
-        $data['assign_date'] = date('Y-m-d');
+        $data['assign_date'] = date('Y-m-d h:m:s');
         // $data['status'] = $request->status;
         // $data['location'] = $request->location;
         $assign = ProductAllocate::create($data);

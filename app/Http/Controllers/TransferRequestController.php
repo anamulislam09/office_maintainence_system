@@ -26,8 +26,6 @@ class TransferRequestController extends Controller
     public function create()
     {
         $offices = Office::where('head_office_id', '')->get();
-
-
         $products = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->get();
         if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1') {
             $products = Product::get();
@@ -38,6 +36,7 @@ class TransferRequestController extends Controller
 
     public function store(Request $request)
     {
+
         $product_id = $request->product_id;
         $data['request_from_office_id'] = Auth::guard('admin')->user()->office_id;
         $data['request_to_office_id'] =  $request->office_id;

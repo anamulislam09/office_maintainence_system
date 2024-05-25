@@ -42,8 +42,10 @@
                   <table id="dataTable" class="table table-bordered table-striped mt-3">
                     <thead>
                       <tr>
-                        <th style="width: 10%">SL</th>
-                        <th style="width: 30%">Product Name</th>
+                        <th style="width: 8%">SL</th>
+                        <th style="width: 15%">Product Code</th>
+                        <th style="width: 20%">Name</th>
+                        <th style="width: 275">SubCategory </th>
                         <th style="width: 30%">Working Status</th>
                       </tr>
                     </thead>
@@ -87,7 +89,9 @@
               tbody += '<input type="hidden" name="product_id[]" value="' + element.product_id + '">';
               tbody += '<input type="hidden" name="office_id[]" value="' + element.office_id + '">';
               tbody += '<td>' + (index + 1) + '</td>';
+              tbody += '<td>' + element.product_code + '</td>';
               tbody += '<td>' + element.name + '</td>';
+              tbody += '<td>' + element.cat_name + '</td>';
               tbody += '<td>' +
                 '<select name="status[]" class="form-control">' +
                 '<option value="1" selected>Working</option>' +

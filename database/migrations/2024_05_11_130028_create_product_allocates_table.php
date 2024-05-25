@@ -18,8 +18,9 @@ return new class extends Migration
             $table->integer('product_id');
             $table->string('office_id');
             $table->date('assign_date');
+            $table->date('updated_date');
             $table->enum('status',[1, 0, -1])->default(1);
-            $table->enum('location',[1, 2, 3, 4])->default(1);
+            $table->enum('location',[1, 2, 3, 4, 5])->default(1);
             $table->timestamps();
         });
     }

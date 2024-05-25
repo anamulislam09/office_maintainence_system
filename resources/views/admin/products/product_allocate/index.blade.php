@@ -71,6 +71,8 @@
                                                                 <span class="badge badge-info">Transit</span>
                                                             @elseif ($assignment->location == 3)
                                                                 <span class="badge badge-success">Transfered</span>
+                                                            @elseif ($assignment->location == 4)
+                                                                <span class="badge badge-danger">Rejected</span>
                                                             @else
                                                                 <span class="badge badge-warning">monitor</span>
                                                             @endif

@@ -12,6 +12,7 @@ class ProductAllocate extends Model
         'product_id',
         'office_id',
         'assign_date',
+        'updated_date',
         'status',
         'location'
     ];

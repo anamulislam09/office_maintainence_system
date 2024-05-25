@@ -24,7 +24,7 @@ class ProductController extends Controller
             $products = Product::orderBy('id', 'desc')->get();
             return view('admin.products.product.index', compact('products'));
         } elseif ((Auth::guard('admin')->user()->office_id !== 0) && (Auth::guard('admin')->user()->office_id !== 1)) {
-            $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->get();
+            $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->whereIn('location', [1, 3])->get();
             $productIds = $assignments->pluck('product_id'); // Get the list of product_ids
             $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
             return view('admin.products.product.index', compact('products'));

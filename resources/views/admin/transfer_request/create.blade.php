@@ -16,7 +16,120 @@
                 </div>
             </div>
         </div>
+
         <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Form</h3>
+                            </div>
+                            <form id="form-submit" action="{{ route('transfer-request.store') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf()
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
+                                            <label>Transfer To </label>
+                                            <select name="office_id" id="office_id" class="form-control">
+                                                <option value="" selected disabled>Select Once</option>
+                                                @foreach ($offices as $office)
+                                                    <option value="{{ $office->id }}">{{ $office->title }}</option>
+                                                    @php
+                                                        $zonal_offices = App\Models\Office::where(
+                                                            'head_office_id',
+                                                            $office->id,
+                                                        )
+                                                            ->where('zonal_office_id', '')
+                                                            ->get();
+                                                    @endphp
+                                                    @foreach ($zonal_offices as $zonal_office)
+                                                        <option value="{{ $zonal_office->id }}">
+                                                            &nbsp;&rightarrow;{{ $zonal_office->title }}</option>
+                                                        @php
+                                                            $branch_offices = App\Models\Office::where(
+                                                                'zonal_office_id',
+                                                                $zonal_office->id,
+                                                            )->get();
+                                                        @endphp
+                                                        @foreach ($branch_offices as $branch_office)
+                                                            <option value="{{ $branch_office->id }}">
+                                                                &nbsp;&rightarrow;&rightarrow; {{ $branch_office->title }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endforeach
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        {{-- <div class="form-group col-sm-4 col-md-4 col-lg-4">
+                                            <label>Date *</label>
+                                            <input name="date" id="date" type="date"
+                                                value="{{ isset($data['purchase']) ? $data['purchase']->note : date('Y-m-d') }}"
+                                                class="form-control" required>
+                                        </div> --}}
+                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
+                                            <label>Choose Products</label>
+                                            <select name="product_id" id="product_id_temp" class="form-control">
+                                                <option value="" selected disabled>Select Once</option>
+
+                                                @if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1')
+                                                    @foreach ($products as $product)
+                                                        <option value="{{ $product->id }}"
+                                                            product-title="{{ $product->name }}"
+                                                            product-code="{{ $product->product_code }}">
+                                                            {{ $product->name }} ({{ $product->product_code }})
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($products as $product)
+                                                        @php
+                                                            $item = App\Models\Product::where(
+                                                                'id',
+                                                                $product->product_id,
+                                                            )->first();
+                                                        @endphp
+                                                        <option value="{{ $item->id }}"
+                                                            product-title="{{ $item->name }}"
+                                                            product-code="{{ $item->product_code }}">{{ $item->name }}
+                                                            ({{ $item->product_code }})
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                            <div class="table-responsive">
+                                                <table id="table"
+                                                    class="table table-striped table-bordered table-centre p-0 m-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="5%">SN</th>
+                                                            <th width="20%">Product Name</th>
+                                                            <th width="20%">Product Code</th>
+                                                            <th width="50%">Product Note</th>
+                                                            <th width="5%">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="table-data">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        {{-- <section class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
@@ -102,196 +215,80 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> --}}
     </div>
 @endsection
-{{-- @section('script')
+@section('script')
     <script>
-        $(document).ready(function(){
-            
-            $('#sub_cat_id').change(function() {
-                   $.ajax({
-                        url: "{{ url('admin/catalogue/load-sub-child') }}/"+$(this).val(),
-                        method: "GET",
-                        dataType: "json",
-                        success: function(data){
-                            var output = '<option value="0">Select Sub-Child</option>';
-                            $.each(data,function(key,value)
-                            {
-                                output += '<option value="'+value.id+'">'+value.title+'</option>';
-                            });
-                            $('#sub_child_id').html(output);
-                        }
-                    });
-            });
+        $(document).ready(function() {
+            $('#product_id_temp').on('change', function(e) {
+                let product_id = $('#product_id_temp').val();
+                let product_title = $('#product_id_temp option:selected').attr('product-title');
+                let product_code = $('#product_id_temp option:selected').attr('product-code');
 
-            $('#generate').click(function(){
-                let product_details = '';
-                let id = 0;
-                $('#colors :selected').each(function(){
-                    let coloName = $(this).text();
-                    let coloID = $(this).val();
-            
-                    $('#sizes :selected').each(function(){
-                        let sizeName = $(this).text();
-                        let sizeID = $(this).val();
-                        product_details += '<tr>';
-                        product_details += '<td align="center" valign="middle" class="serial"></td>';
-                        product_details += '<td align="left" valign="middle">' + coloName + '</td>';
-                        product_details += '<td align="left" valign="middle">' + sizeName + '</td>';
-                        product_details += '<td><input type="number" name="stock[]" class="form-control form-control-sm" style="text-align:right" min="0" placeholder="0.00" required></td>';
+                var td = '';
+                td += '<tr>';
+                td += '<td class="serial"></td>';
+                td += '<td><input type="hidden" value="' + product_id + '" name="product_id[]">' +
+                    product_title + '</td>';
+                // td += '<td><input type="hidden" value="' + product_title +
+                //     '" name="product_title[]" required>' + product_title + '</td>';
+                td += '<td><input type="hidden" value="' + product_code +
+                    '" name="product_code[]"  required>' + product_code + '</td>';
+                td +=
+                    '<td> <textarea id="note" class="form-control" name="note[]" style="font-size: 15px;" placeholder="Enter some notes about why you want to transfer this product."></textarea> </td>';
+                td +=
+                    '<td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>';
+                td += '</tr>';
 
-                        product_details += '<td align="left" valign="middle"><label class="col-3">';
-                        product_details +=     '<img id="image-'+id+'" style="width:100px!imporatant; height:100px!imporatant;" class="img-thumbnail" src="{{ asset("public/uploads/admin/placeholder.png") }}">'
-                        product_details +=      '<input hidden onchange="variantImage('+id+');" class="form-control form-control-sm variantImage" type="file" name="image[]">';
-                        product_details += '</label></td>';
-                        
-                        product_details += '<input type="hidden" name="color_id[]" value="' + coloID + '">';
-                        product_details += '<input type="hidden" name="size_id[]" value="' + sizeID + '">';
-                        product_details += '<td align="center" valign="middle">';
-                        product_details += '<button class="btn btn-danger btn-sm item-delete"><i class="fa fa-trash" style="cursor:pointer"></i></button></td>';
-                        product_details += '</tr>';
-
-                        id++;
-                    });
+                $('#table-data').append(td);
+                $(".serial").each(function(index) {
+                    $(this).html(index + 1);
                 });
-                $('.item-table').html(product_details);
-                serialMaintain();
+                // $('#item_id_temp').val('');
+                // calculate(true);
             });
 
-            const serialMaintain = () =>{
-                var i = 1;
-                $('.serial').each(function(key, element){
-                    $(element).html(i);
-                    i++;
+            $('#table-data').bind('click', function(e) {
+                $(e.target).is('.btn-del') && e.target.closest('tr').remove();
+                $(".serial").each(function(index) {
+                    $(this).html(index + 1);
                 });
-            }
-            $('.item-table').on('click','.item-delete',function(){ 
-                $(this).parents('tr').remove();
-                serialMaintain();
             });
 
-            
-        $('#description').summernote({
-            placeholder: 'Product Description',
-            tabsize: 2,
-            height: 100
-        });
-        
-        $('#meta_description').summernote({
-            placeholder: 'Meta Description',
-            tabsize: 2,
-            height: 100
         });
 
-        $('form').on('submit', function(e){
-            let input = document.getElementById("product_image");
-            if(!(input.files && input.files[0]))
-            {
+        $('#form-submit').submit(function(e) {
+            if (!$('input[name="product_id[]"]').length) {
                 e.preventDefault();
-               return Swal.fire({
-                title: "Please Select Product Image!",
-                    showClass: {
-                    popup: `
-                        animate__animated
-                        animate__fadeInUp
-                        animate__faster
-                    `
-                    },
-                    hideClass: {
-                    popup: `
-                        animate__animated
-                        animate__fadeOutDown
-                        animate__faster
-                    `
-                    }
-                });
+                Swal.fire("Please Insert Item!");
             }
-            if(!($('.item-table').children().length))
-            {
-                e.preventDefault();
-               return Swal.fire({
-                title: "Please Select Generate Product Variants!",
-                    showClass: {
-                    popup: `
-                        animate__animated
-                        animate__fadeInUp
-                        animate__faster
-                    `
-                    },
-                    hideClass: {
-                    popup: `
-                        animate__animated
-                        animate__fadeOutDown
-                        animate__faster
-                    `
-                    }
-                });
-            }
-
-            var imgSet = true;
-
-            $('.variantImage').each(function(index, element){
-                if(!(element.files && element.files[0])){
-                    imgSet = false;
-                }
-            });
-
-            if(!imgSet){
-                e.preventDefault();
-                return Swal.fire({
-                title: "Please Select Variants Images",
-                    showClass: {
-                    popup: `
-                        animate__animated
-                        animate__fadeInUp
-                        animate__faster
-                    `
-                    },
-                    hideClass: {
-                    popup: `
-                        animate__animated
-                        animate__fadeOutDown
-                        animate__faster
-                    `
-                    }
-                });
-            }
-
         });
- 
 
-});
 
-    function productImage(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                $('#product_image_view').attr('src', e.target.result);
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    function productImageBack(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                $('#product_image_back_view').attr('src', e.target.result);
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    function variantImage(id){
-        let input = document.getElementsByClassName("variantImage")[id];
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
+        // function calculate(isDefaultRecipentAmt) {
+        //     let item_id = $('input[name="item_id[]"]');
+        //     let total = 0;
+        //     for (let i = 0; i < item_id.length; i++) {
+        //         $('input[name="sub_total[]"]')[i].value = ($('input[name="unit_price[]"]')[i].value * $(
+        //             'input[name="quantity[]"]')[i].value);
+        //         total += $('input[name="unit_price[]"]')[i].value * $('input[name="quantity[]"]')[i].value;
+        //     }
+        //     $('#total').val(total);
+        //     let discount_method = $('#discount_method').val();
+        //     let discount_rate = parseFloat($('#discount_rate').val());
+        //     let tax_amount = parseFloat($('#tax_amount').val());
 
-            reader.onload = function(e) {
-                $('#image-'+id).attr('src', e.target.result);
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-</script>
-@endsection --}}
+        //     let discount_amount = discount_rate;
+        //     if (discount_method == 1) discount_amount = total * (discount_rate / 100);
+        //     let total_payable = total + tax_amount - discount_amount;
+        //     if (isDefaultRecipentAmt) {
+        //         $('#paid_amount').val(total_payable.toFixed(2));
+        //     } else {
+        //         paid_amount = $('#paid_amount').val();
+        //     }
+        //     $('#discount_amount').val(discount_amount.toFixed(2));
+        //     $('#total_payable').val(total_payable.toFixed(2));
+        // }
+    </script>
+@endsection
