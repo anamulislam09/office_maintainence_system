@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('request_from_office_id');
             $table->string('request_to_office_id');
-            $table->integer('created_by_id');
-            $table->integer('updated_by_id');
-            $table->date('date');
-            $table->string('note');
+            $table->string('created_by');
+            $table->string('updated_by');
+            $table->date('created_date');
+            $table->date('updated_date')->nullable();
             $table->enum('status',[0, 1, 2, 3])->default(0);
             $table->timestamps();
         });

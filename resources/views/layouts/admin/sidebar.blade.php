@@ -187,7 +187,6 @@
                                 </li>
                             @endif
                         </ul>
-
                     </li>
                 @endif
                 @if (Auth::guard('admin')->user()->type == 'superadmin' ||
@@ -231,7 +230,6 @@
                                 </li>
                             @endif
                         </ul>
-
                     </li>
                 @endif
                 @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product', $privileges))
@@ -350,7 +348,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                                    (Auth::guard('admin')->user()->office_id == '1' || in_array('Add', $privileges)))
+                                    (Auth::guard('admin')->user()->office_id == '1' || in_array('Transfer Request, Add', $privileges)))
                                 <li class="nav-item">
                                     <a href="{{ url('admin/transfer-request/create') }}"
                                         class="nav-link {{ request()->is('admin/transfer-request/create') ? 'active' : '' }}">
@@ -373,13 +371,13 @@
                     </li>
                 @endif
                 @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                        (Auth::guard('admin')->user()->office_id == '1' || in_array('Received Request', $privileges)))
+                        (Auth::guard('admin')->user()->office_id == '1' || in_array('Receive', $privileges)))
                     <li class="nav-item {{ request()->is('admin/receive-request/*') ? 'menu-open' : '' }}">
                         <a href="#"
                             class="nav-link {{ request()->is('admin/receive-request/*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-edit"></i>
                             <p>
-                                Received Request
+                                Receive
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
@@ -395,12 +393,12 @@
                                 </li>
                             @endif --}}
                             @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                                    (Auth::guard('admin')->user()->office_id == '1' || in_array('Received Request', $privileges)))
+                                    (Auth::guard('admin')->user()->office_id == '1' || in_array('Receive', $privileges)))
                                 <li class="nav-item">
                                     <a href="{{ url('admin/receive-request/all') }}"
                                         class="nav-link {{ request()->is('admin/receive-request/all') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>All Request</p>
+                                        <p>All Receive</p>
                                     </a>
                                 </li>
                             @endif

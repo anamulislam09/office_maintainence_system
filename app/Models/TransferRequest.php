@@ -11,10 +11,10 @@ class TransferRequest extends Model
     protected $fillable = [
         'request_from_office_id',
         'request_to_office_id',
-        'created_by_id',
-        'updated_by_id',
-        'date',
-        'note',
+        'created_by',
+        'updated_by',
+        'created_date',
+        'updated_date',
         'status'
     ];
 }

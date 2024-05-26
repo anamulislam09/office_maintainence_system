@@ -41,6 +41,8 @@
                                                     <th>Request To</th>
                                                     <th>Request From</th>
                                                     <th>Product Name</th>
+                                                    <th>Category Name</th>
+                                                    <th>Created By</th>
                                                     <th>Request date</th>
                                                     <th>Note</th>
                                                     <th>Status</th>
@@ -50,62 +52,45 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data as $key => $item)
-                                                    @php
-                                                        $request_to_name = App\Models\Office::where(
-                                                            'id',
-                                                            $item->request_to_office_id,
-                                                        )->first();
-                                                        $request_from_name = App\Models\Office::where(
-                                                            'id',
-                                                            $item->request_from_office_id,
-                                                        )->first();
-                                                        $requestDetails = App\Models\TransferRequestDetails::where(
-                                                            'transfer_request_id',
-                                                            $item->id,
-                                                        )->first();
-                                                        $product = App\Models\product::where(
-                                                            'id',
-                                                            $requestDetails->product_id,
-                                                        )->first();
-                                                    @endphp
+                                                @foreach ($transferRequests as $key => $request)
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $request_to_name->title }}</td>
-                                                        <td>{{ $request_from_name->title }}</td>
-                                                        <td>{{ $product->name }}</td>
-                                                        <td>{{ $item->date }}</td>
-                                                        <td>{{ $item->note }}</td>
-
+                                                        <td>{{ $request->to_office_name }}</td>
+                                                        <td>{{ $request->from_office_name }}</td>
+                                                        <td>{{ $request->name }}</td>
+                                                        <td>{{ $request->cat_name }}</td>
+                                                        <td>{{ $request->created_by }}</td>
+                                                        <td>{{ $request->created_date }}</td>
+                                                        <td>{{ $request->transfer_note }}</td>
                                                         <td>
-                                                            @if ($item->status == 0)
-                                                                <span class="badge badge-warning">Pending</span>
-                                                            @elseif ($item->status == 1)
-                                                                <span class="badge badge-primary">Approved</span>
-                                                            @elseif ($item->status == 2)
-                                                                <span class="badge badge-primary">Accepted</span>
+                                                            @if ($request->location == 1)
+                                                                <span class="badge badge-primary">Local</span>
+                                                            @elseif ($request->location == 2)
+                                                                <span class="badge badge-info">Transit</span>
+                                                            @elseif ($request->location == 3)
+                                                                <span class="badge badge-success">Transfered</span>
+                                                            @elseif ($request->location == 4)
+                                                                <span class="badge badge-danger">Rejected</span>
                                                             @else
-                                                                <span class="badge badge-primary">Cancelled</span>
+                                                                <span class="badge badge-warning">Monitor</span>
                                                             @endif
                                                         </td>
-
                                                         @if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1')
                                                             <td>
                                                                 <div class="d-flex justify-content-center">
-                                                                    <a href="{{ route('product.edit', $product->id) }}"
+                                                                    {{-- <a href="{{ route('transfer-request.accept', $request->product_id) }}"
                                                                         class="btn btn-sm btn-info"
                                                                         style="margin-right: 2px">
                                                                         Approved
                                                                     </a>
-                                                                    <a href="{{ route('product.edit', $product->id) }}"
+                                                                    <a href="{{ route('transfer-request.cancel', $request->product_id) }}"
                                                                         class="btn btn-sm btn-danger"
                                                                         style="margin-right: 2px">
                                                                         Cancelled
-                                                                    </a>
+                                                                    </a> --}}
                                                                 </div>
                                                             </td>
                                                         @endif
-
                                                     </tr>
                                                 @endforeach
                                             </tbody>

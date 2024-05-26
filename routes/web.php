@@ -131,10 +131,10 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::get('/transfer-request/all', [TransferRequestController::class, 'index'])->name('transfer-request.index');
         Route::get('/transfer-request/create', [TransferRequestController::class, 'create'])->name('transfer-request.create');
         Route::post('/transfer-request/store', [TransferRequestController::class, 'store'])->name('transfer-request.store');
-        Route::get('/transfer-request/show/{id}', [TransferRequestController::class, 'show'])->name('transfer-request.show');
-        Route::get('/transfer-request/edit/{id}', [TransferRequestController::class, 'edit'])->name('transfer-request.edit');
-        Route::post('/transfer-request/update', [TransferRequestController::class, 'update'])->name('transfer-request.update');
-        Route::delete('/transfer-request/delete/{id}', [TransferRequestController::class, 'destroy'])->name('transfer-request.destroy');
+        // Route::get('/transfer-request/show/{id}', [TransferRequestController::class, 'show'])->name('transfer-request.show');
+        Route::get('/transfer-request/get-data/{id}', [ReceiveRequestController::class, 'getOfficeData']);
+        Route::get('/transfer-request/get-data', [ReceiveRequestController::class, 'getData']);
+        Route::get('/transfer-request/cancel/{id}', [TransferRequestController::class, 'cancel'])->name('transfer-request.cancel');
         
         //    Trtansfer Request route start here ---->
         Route::get('/receive-request/all', [ReceiveRequestController::class, 'index'])->name('receive-request.index');

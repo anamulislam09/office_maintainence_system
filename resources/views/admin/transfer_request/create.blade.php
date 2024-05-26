@@ -30,9 +30,41 @@
                                 @csrf()
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
+                                        <div class="form-group col-sm-12 col-md-4 col-lg-4 ">
                                             <label>Transfer To </label>
-                                            <select name="office_id" id="office_id" class="form-control">
+                                            <select name="transfer_to_office_id" id="transfer_to_office_id" class="form-control">
+                                                <option value="" selected disabled>Select Once</option>
+                                                @foreach ($offices as $office)
+                                                    <option value="{{ $office->id }}">{{ $office->title }}</option>
+                                                    @php
+                                                        $zonal_offices = App\Models\Office::where(
+                                                            'head_office_id',
+                                                            $office->id,
+                                                        )
+                                                            ->where('zonal_office_id', '')
+                                                            ->get();
+                                                    @endphp
+                                                    @foreach ($zonal_offices as $zonal_office)
+                                                        <option value="{{ $zonal_office->id }}">
+                                                            &nbsp;&rightarrow;{{ $zonal_office->title }}</option>
+                                                        @php
+                                                            $branch_offices = App\Models\Office::where(
+                                                                'zonal_office_id',
+                                                                $zonal_office->id,
+                                                            )->get();
+                                                        @endphp
+                                                        @foreach ($branch_offices as $branch_office)
+                                                            <option value="{{ $branch_office->id }}">
+                                                                &nbsp;&rightarrow;&rightarrow; {{ $branch_office->title }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endforeach
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-sm-12 col-md-4 col-lg-4 ">
+                                            <label>Transfer From </label>
+                                            <select name="transfer_from_office_id" id="transfer_from_office_id" class="form-control">
                                                 <option value="" selected disabled>Select Once</option>
                                                 @foreach ($offices as $office)
                                                     <option value="{{ $office->id }}">{{ $office->title }}</option>
@@ -68,7 +100,7 @@
                                                 value="{{ isset($data['purchase']) ? $data['purchase']->note : date('Y-m-d') }}"
                                                 class="form-control" required>
                                         </div> --}}
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
+                                        <div class="form-group col-sm-12 col-md-4 col-lg-4 ">
                                             <label>Choose Products</label>
                                             <select name="product_id" id="product_id_temp" class="form-control">
                                                 <option value="" selected disabled>Select Once</option>
@@ -248,6 +280,7 @@
                 // $('#item_id_temp').val('');
                 // calculate(true);
             });
+            
 
             $('#table-data').bind('click', function(e) {
                 $(e.target).is('.btn-del') && e.target.closest('tr').remove();
@@ -266,29 +299,5 @@
         });
 
 
-        // function calculate(isDefaultRecipentAmt) {
-        //     let item_id = $('input[name="item_id[]"]');
-        //     let total = 0;
-        //     for (let i = 0; i < item_id.length; i++) {
-        //         $('input[name="sub_total[]"]')[i].value = ($('input[name="unit_price[]"]')[i].value * $(
-        //             'input[name="quantity[]"]')[i].value);
-        //         total += $('input[name="unit_price[]"]')[i].value * $('input[name="quantity[]"]')[i].value;
-        //     }
-        //     $('#total').val(total);
-        //     let discount_method = $('#discount_method').val();
-        //     let discount_rate = parseFloat($('#discount_rate').val());
-        //     let tax_amount = parseFloat($('#tax_amount').val());
-
-        //     let discount_amount = discount_rate;
-        //     if (discount_method == 1) discount_amount = total * (discount_rate / 100);
-        //     let total_payable = total + tax_amount - discount_amount;
-        //     if (isDefaultRecipentAmt) {
-        //         $('#paid_amount').val(total_payable.toFixed(2));
-        //     } else {
-        //         paid_amount = $('#paid_amount').val();
-        //     }
-        //     $('#discount_amount').val(discount_amount.toFixed(2));
-        //     $('#total_payable').val(total_payable.toFixed(2));
-        // }
     </script>
 @endsection

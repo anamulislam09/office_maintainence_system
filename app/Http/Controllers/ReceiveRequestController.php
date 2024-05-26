@@ -17,16 +17,33 @@ class ReceiveRequestController extends Controller
             $products = Product::orderBy('id', 'desc')->get();
             return view('admin.products.product.index', compact('products'));
         } elseif ((Auth::guard('admin')->user()->office_id !== 0) && (Auth::guard('admin')->user()->office_id !== 1)) {
-            $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)
-                ->where('location', 2)
-                ->get();
-            // Get the list of product IDs from the assignments
-            $productIds = $assignments->pluck('product_id')->toArray();
-            // Fetch products based on the product IDs
-            $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
-
-            return view('admin.received_request.index', compact('assignments', 'products'));
+            return view('admin.received_request.index');
+            // return view('admin.received_request.index', compact('assignments', 'products'));
         }
+    }
+
+    public function getOfficeData($id)
+    {
+        $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)
+            ->where('location', 2)
+            ->get();
+        $productIds = $assignments->pluck('product_id')->toArray();
+        $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
+        // dd($assignments);
+        // dd($products);
+        return view('admin.received_request.head_office', compact('assignments', 'products'));
+    }
+
+    public function getData()
+    {
+        $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)
+            ->where('location', 2)
+            ->get();
+        $productIds = $assignments->pluck('product_id')->toArray();
+        $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
+        // dd($assignments);
+        // dd($products);
+        return view('admin.received_request.head_office', compact('assignments', 'products'));
     }
 
     // public function edit($id)
@@ -50,11 +67,11 @@ class ReceiveRequestController extends Controller
     {
         $data = ProductAllocate::where('id', $id)->first();
         $data['updated_date'] = date('Y-m-d h:m:s');
-        $data['location'] = 3;
+        $data['location'] = 4;
         $update = $data->save();
-        if($update){
+        if ($update) {
             $product = Product::where('id', $data->product_id)->first();
-            $product['isassign'] = 2;
+            $product['isassign'] = 0;
             $product->save();
         }
 

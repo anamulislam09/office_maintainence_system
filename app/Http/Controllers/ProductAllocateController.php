@@ -33,7 +33,7 @@ class ProductAllocateController extends Controller
         $data['office_id'] = $request->office_id;
         $data['assign_date'] = date('Y-m-d h:m:s');
         // $data['status'] = $request->status;
-        // $data['location'] = $request->location;
+        $data['location'] = 2;
         $assign = ProductAllocate::create($data);
         if ($assign) {
             $product = Product::where('id', $request->product_id)->first();
