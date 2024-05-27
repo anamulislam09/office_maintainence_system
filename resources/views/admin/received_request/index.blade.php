@@ -111,7 +111,7 @@
         })
 
          $('body').on('click', '#getBtn', function() {
-            $.get("/admin/transfer-request/get-data/" + officeId, function(data) {
+            $.get("/admin/transfer-request/get-data/" , function(data) {
                 $('#table_body').html(data);
             })
         })

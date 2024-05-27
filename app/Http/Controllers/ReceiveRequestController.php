@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Office;
 use App\Models\Product;
 use App\Models\ProductAllocate;
 use App\Models\ReceiveRequest;
+use App\Models\TransferRequestDetails;
 use Illuminate\Http\Request;
 use Auth;
-
+use Illuminate\Support\Facades\DB;
 
 class ReceiveRequestController extends Controller
 {
@@ -25,25 +27,29 @@ class ReceiveRequestController extends Controller
     public function getOfficeData($id)
     {
         $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)
-            ->where('location', 2)
+            ->where('location', 2)->whereNull('updated_date')
             ->get();
         $productIds = $assignments->pluck('product_id')->toArray();
         $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
-        // dd($assignments);
-        // dd($products);
         return view('admin.received_request.head_office', compact('assignments', 'products'));
     }
 
     public function getData()
     {
-        $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)
-            ->where('location', 2)
-            ->get();
-        $productIds = $assignments->pluck('product_id')->toArray();
-        $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
-        // dd($assignments);
-        // dd($products);
-        return view('admin.received_request.head_office', compact('assignments', 'products'));
+
+        $transferRequests = DB::table('transfer_requests')
+            ->where('request_to_office_id', Auth::guard('admin')->user()->office_id)
+            ->where('status', 2)
+            ->first();
+        // dd($transferRequests);
+        $transferPrtoduct = TransferRequestDetails::where('transfer_request_id', $transferRequests->id)->get();
+        $productId = $transferPrtoduct->pluck('product_id')->toArray();
+        // dd($productId);
+        $products = Product::whereIn('id', $productId)->get();
+
+        // $products = Product::where('id', $transferRequests->product_id)->get();
+
+        return view('admin.received_request.others_office', compact('transferRequests','products'));
     }
 
     // public function edit($id)

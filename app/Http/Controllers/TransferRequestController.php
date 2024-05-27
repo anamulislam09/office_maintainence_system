@@ -62,40 +62,62 @@ class TransferRequestController extends Controller
         }
     }
 
+    // show all transfer issu form Branch and zonal office 
     public function issue()
     {
-        // dd(Auth::guard('admin')->user()->office_id);
-        $transferRequests = DB::table('transfer_requests')->where('request_from_office_id', Auth::guard('admin')->user()->office_id)
-            ->join('transfer_request_details', 'transfer_requests.id', '=', 'transfer_request_details.transfer_request_id')
-            ->join('products', 'transfer_request_details.product_id', '=', 'products.id')
-            ->join('product_allocates', 'transfer_request_details.product_id', '=', 'product_allocates.product_id')
-            ->join('categories', 'products.cat_id', '=', 'categories.id')
-            ->join('offices as from_office', 'transfer_requests.request_from_office_id', '=', 'from_office.id')
-            ->join('offices as to_office', 'transfer_requests.request_to_office_id', '=', 'to_office.id')
-            ->select(
-                'transfer_requests.*',
-                'transfer_requests.status as transfer_status',
-                'transfer_requests.id as transfer_id',
-                'transfer_request_details.note as transfer_note',
-                'product_allocates.location',
-                'products.name',
-                'categories.name as cat_name',
-                'from_office.title AS from_office_name',
-                'to_office.title AS to_office_name'
-            )
-            ->get();
-        return view('admin.transfer_request.issue', compact('transferRequests'));
+        $transferRequests = DB::table('transfer_requests')
+            ->where('request_from_office_id', Auth::guard('admin')->user()->office_id)
+            ->where('status', 1)
+            ->first();
+
+        if (!$transferRequests) {
+            return redirect()->back()->with('alert', ['messageType' => 'error', 'message' => 'No pending transfer requests found for your office.']);
+        }
+
+        $office_name = Office::where('id', $transferRequests->request_to_office_id)->value('title');
+        return view('admin.transfer_request.issue', compact('transferRequests', 'office_name'));
+    }
+
+    // transfer issu show all product 
+    public function showProduct($id)
+    {
+        $transferPrtoduct = TransferRequestDetails::where('transfer_request_id', $id)->get();
+        $productId = $transferPrtoduct->pluck('product_id')->toArray();
+        $products = Product::whereIn('id', $productId)->orderBy('id', 'desc')->get();
+        return view('admin.transfer_request.product', compact('products'));
+    }
+
+    // product transfer issu approved method 
+    public function issued($id)
+    {
+        $admin = Admin::with('role')->find(Auth::guard('admin')->user()->id);
+        $data = TransferRequest::find($id);
+
+        $data->status = 2;
+        $data->created_by = $admin->role->role;
+        $data->updated_date = now();
+        $data->save();
+
+        $transferProducts = TransferRequestDetails::where('transfer_request_id', $id)->get();
+
+        foreach ($transferProducts as $product) {
+            $product_allocate = ProductAllocate::where('office_id', $data->request_from_office_id)
+                ->where('product_id', $product->product_id)
+                ->first();
+            if ($product_allocate) {
+                $product_allocate->location = 2;
+                $product_allocate->save();
+            }
+        }
+
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Product Transfer!']);
     }
 
     public function create()
     {
-        // $products = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->get();
-        // if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1') {
         $offices = Office::where('head_office_id', '')->get();
         $products = Product::get();
         return view('admin.transfer_request.create', compact('offices', 'products'));
-        // }
-        // return view('admin.transfer_request.create', compact('offices', 'products'));
     }
 
     // insert sub category category using ajax request

@@ -38,8 +38,8 @@
                       <thead>
                         <tr>
                           <th>SN</th>
-                          <th>Request To</th>
-                          <th>Request From</th>
+                          <th>Transfer To</th>
+                          <th>Transfer From</th>
                           <th>Product Name</th>
                           <th>Category Name</th>
                           <th>Created By</th>
@@ -53,7 +53,6 @@
                           <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $request->to_office_name }}</td>
-                            <td>{{ $request->from_office_name }}</td>
                             <td>{{ $request->name }}</td>
                             <td>{{ $request->cat_name }}</td>
                             <td>{{ $request->created_by }}</td>
@@ -85,3 +84,5 @@
     </section>
   </div>
 @endsection
+
+

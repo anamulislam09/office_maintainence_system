@@ -130,7 +130,8 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         //    Trtansfer Request route start here ---->
         Route::get('/transfer-request/all', [TransferRequestController::class, 'index'])->name('transfer-request.index');
         Route::get('/transfer-request/issue', [TransferRequestController::class, 'issue'])->name('transfer-request.issue');
-        Route::get('/transfer-request/issued', [TransferRequestController::class, 'issued'])->name('transfer-request.issued');
+        Route::get('/transfer-request/issued/{id}', [TransferRequestController::class, 'issued'])->name('transfer-request.issued');
+        Route::get('/transfer-request/products/{id}', [TransferRequestController::class, 'showProduct']);
 
         Route::get('/transfer-request/create', [TransferRequestController::class, 'create'])->name('transfer-request.create');
         Route::post('/transfer-request/store', [TransferRequestController::class, 'store'])->name('transfer-request.store');
@@ -139,7 +140,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::get('/transfer-request/get-data', [ReceiveRequestController::class, 'getData']);
         Route::post('/transfer-request/get-product', [TransferRequestController::class, 'getProduct']);
         Route::get('/transfer-request/cancel/{id}', [TransferRequestController::class, 'cancel'])->name('transfer-request.cancel');
-        
+
         //    Trtansfer Request route start here ---->
         Route::get('/receive-request/all', [ReceiveRequestController::class, 'index'])->name('receive-request.index');
         Route::get('/receive-request/accept/{id}', [ReceiveRequestController::class, 'update'])->name('receive-request.accept');
