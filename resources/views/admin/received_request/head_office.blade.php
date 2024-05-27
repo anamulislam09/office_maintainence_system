@@ -6,13 +6,13 @@
         @if ($product->id === $assignment->product_id)
             <td>{{ $product->name }}</td>
             <td>{{ $product->product_code }}</td>
-            <td>
+            {{-- <td>
                 @if ($product->status == 1)
                     <span class="badge badge-primary">Active</span>
                 @else
                     <span class="badge badge-danger">Inactive</span>
                 @endif
-            </td>
+            </td> --}}
         @break
     @endif
 @endforeach

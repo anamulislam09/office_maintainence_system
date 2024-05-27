@@ -30,7 +30,7 @@
                                     <div class="row">
                                         <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
                                             <label>Category</label>
-                                            <select name="cat_id" id="" class="form-control">
+                                            <select name="cat_id" id="" class="form-control" >
                                                 <option value="" selected disabled>Select Once</option>
                                                 {{-- subcategoris --}}
                                                 @foreach ($data as $main_cat)

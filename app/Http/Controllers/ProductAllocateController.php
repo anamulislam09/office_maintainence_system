@@ -15,6 +15,7 @@ class ProductAllocateController extends Controller
         $assignments = ProductAllocate::join('products', 'product_allocates.product_id', '=', 'products.id')
             ->join('offices', 'product_allocates.office_id', '=', 'offices.id')->where('product_allocates.location', '!=', 4)
             ->select('product_allocates.*', 'products.name as product_name', 'offices.title as office_name', 'offices.head_office_id as head_office_id',  'offices.zonal_office_id as zonal_office_id')
+            ->orderBy('id', 'desc')
             ->get();
 
         return view('admin.products.product_allocate.index', compact('assignments'));
@@ -29,11 +30,12 @@ class ProductAllocateController extends Controller
 
     public function store(Request $request)
     {
+        $office_id = $request->office_id;
         $data['product_id'] = $request->product_id;
-        $data['office_id'] = $request->office_id;
+        $data['office_id'] = $office_id;
         $data['assign_date'] = date('Y-m-d h:m:s');
         // $data['status'] = $request->status;
-        $data['location'] = 2;
+        $data['location'] = $office_id == 1 ? 1 : 2;
         $assign = ProductAllocate::create($data);
         if ($assign) {
             $product = Product::where('id', $request->product_id)->first();

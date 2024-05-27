@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Product Transfer</h1>
+            <h1 class="m-0">All Issue Product</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-              <li class="breadcrumb-item active">Transfer</li>
+              <li class="breadcrumb-item"><a href=Transfer"{{ url('admin/dashboard') }}">Dashboard</a></li>
+              <li class="breadcrumb-item active">Issue</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
               <div class="card-header bg-primary p-1">
                 <h3 class="card-title">
                   <a href="#"class="btn btn-light shadow rounded m-0">
-                    <span>All Transfer</span></i></a>
+                    <span>All Issue</span></i></a>
                 </h3>
               </div>
               <div class="card-body">
@@ -46,6 +46,9 @@
                           <th>Request date</th>
                           <th>Note</th>
                           <th>Status</th>
+                          {{-- @if (Auth::guard('admin')->user()->office_id !== '0' || Auth::guard('admin')->user()->office_id !== '1') --}}
+                          <th>Action</th>
+                          {{-- @endif --}}
                         </tr>
                       </thead>
                       <tbody>
@@ -67,10 +70,25 @@
                               @elseif ($request->transfer_status == 3)
                                 <span class="badge badge-success">Accepted</span>
                               @else
-                              <span class="badge badge-danger">Rejected</span>
+                                <span class="badge badge-danger">Rejected</span>
                               @endif
                             </td>
-
+                            </td>
+                            {{-- @if (Auth::guard('admin')->user()->office_id !== '0' || Auth::guard('admin')->user()->office_id !== '1') --}}
+                            <td>
+                              <div class="d-flex justify-content-center">
+                                <a href="{{ route('transfer-request.issue', $request->transfer_id) }}"
+                                  class="btn btn-sm btn-info" style="margin-right: 2px">
+                                  Issue
+                                </a>
+                                {{-- <a href="{{ route('transfer-request.cancel', $request->product_id) }}"
+                                                                        class="btn btn-sm btn-danger"
+                                                                        style="margin-right: 2px">
+                                                                        Cancelled
+                                                                    </a> --}}
+                              </div>
+                            </td>
+                            {{-- @endif --}}
                           </tr>
                         @endforeach
                       </tbody>

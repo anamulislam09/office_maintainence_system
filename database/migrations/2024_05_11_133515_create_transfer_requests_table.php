@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('updated_by');
             $table->date('created_date');
             $table->date('updated_date')->nullable();
-            $table->enum('status',[0, 1, 2, 3])->default(0);
+            $table->enum('status',[1, 2, 3, 4])->default(1);
             $table->timestamps();
         });
     }

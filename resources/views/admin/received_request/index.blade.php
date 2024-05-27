@@ -47,7 +47,7 @@
                                                     <th>SN</th>
                                                     <th>Product Name</th>
                                                     <th>Product Code</th>
-                                                    <th>Status</th>
+                                                    {{-- <th>Status</th> --}}
                                                     <th>Request</th>
                                                     <th>Action</th>
                                                 </tr>

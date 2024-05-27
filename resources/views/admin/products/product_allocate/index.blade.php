@@ -43,7 +43,7 @@
                                                     <th>Product Name</th>
                                                     <th>Office Name</th>
                                                     <th>Assign Date</th>
-                                                    <th>Status</th>
+                                                    {{-- <th>Status</th> --}}
                                                     <th>Location</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -55,7 +55,7 @@
                                                         <td>{{ $assignment->product_name }}</td>
                                                         <td>{{ $assignment->office_name }}</td>
                                                         <td>{{ $assignment->assign_date }}</td>
-                                                        <td>
+                                                        {{-- <td>
                                                             @if ($assignment->status == 1)
                                                                 <span class="badge badge-primary">Live</span>
                                                             @elseif ($assignment->status == 0)
@@ -63,7 +63,7 @@
                                                             @else
                                                                 <span class="badge badge-danger">Dead</span>
                                                             @endif
-                                                        </td>
+                                                        </td> --}}
                                                         <td>
                                                             @if ($assignment->location == 1)
                                                                 <span class="badge badge-primary">Local</span>

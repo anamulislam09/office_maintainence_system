@@ -342,7 +342,7 @@
                             class="nav-link {{ request()->is('admin/transfer-request/*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-edit"></i>
                             <p>
-                                Transfer Request
+                                Transfer
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
@@ -350,20 +350,29 @@
                             @if (Auth::guard('admin')->user()->type == 'superadmin' ||
                                     (Auth::guard('admin')->user()->office_id == '1' || in_array('Transfer Request, Add', $privileges)))
                                 <li class="nav-item">
-                                    <a href="{{ url('admin/transfer-request/create') }}"
+                                    <a href="{{ url('admin/transfer-request/create') }}"    
                                         class="nav-link {{ request()->is('admin/transfer-request/create') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Add Request</p>
+                                        <p>Add Transfer</p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (in_array('Issue', $privileges))
+                                <li class="nav-item">
+                                    <a href="{{ url('admin/transfer-request/issue') }}"
+                                        class="nav-link {{ request()->is('admin/transfer-request/issue') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Issue</p>
                                     </a>
                                 </li>
                             @endif
                             @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                                    (Auth::guard('admin')->user()->office_id == '1' || in_array('Update Details', $privileges)))
+                                    Auth::guard('admin')->user()->office_id == '1')
                                 <li class="nav-item">
                                     <a href="{{ url('admin/transfer-request/all') }}"
                                         class="nav-link {{ request()->is('admin/transfer-request/all') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>All Request</p>
+                                        <p>All Transfer</p>
                                     </a>
                                 </li>
                             @endif

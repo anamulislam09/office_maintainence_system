@@ -26,6 +26,7 @@ class TransferRequestController extends Controller
                 ->join('offices as to_office', 'transfer_requests.request_to_office_id', '=', 'to_office.id')
                 ->select(
                     'transfer_requests.*',
+                    'transfer_requests.status as transfer_status',
                     'transfer_request_details.note as transfer_note',
                     'product_allocates.location',
                     'products.name',
@@ -47,6 +48,7 @@ class TransferRequestController extends Controller
                 ->join('offices as to_office', 'transfer_requests.request_to_office_id', '=', 'to_office.id')
                 ->select(
                     'transfer_requests.*',
+                    'transfer_requests.status as transfer_status',
                     'transfer_request_details.note as transfer_note',
                     'product_allocates.location',
                     'products.name',
@@ -60,16 +62,71 @@ class TransferRequestController extends Controller
         }
     }
 
+    public function issue()
+    {
+        // dd(Auth::guard('admin')->user()->office_id);
+        $transferRequests = DB::table('transfer_requests')->where('request_from_office_id', Auth::guard('admin')->user()->office_id)
+            ->join('transfer_request_details', 'transfer_requests.id', '=', 'transfer_request_details.transfer_request_id')
+            ->join('products', 'transfer_request_details.product_id', '=', 'products.id')
+            ->join('product_allocates', 'transfer_request_details.product_id', '=', 'product_allocates.product_id')
+            ->join('categories', 'products.cat_id', '=', 'categories.id')
+            ->join('offices as from_office', 'transfer_requests.request_from_office_id', '=', 'from_office.id')
+            ->join('offices as to_office', 'transfer_requests.request_to_office_id', '=', 'to_office.id')
+            ->select(
+                'transfer_requests.*',
+                'transfer_requests.status as transfer_status',
+                'transfer_requests.id as transfer_id',
+                'transfer_request_details.note as transfer_note',
+                'product_allocates.location',
+                'products.name',
+                'categories.name as cat_name',
+                'from_office.title AS from_office_name',
+                'to_office.title AS to_office_name'
+            )
+            ->get();
+        return view('admin.transfer_request.issue', compact('transferRequests'));
+    }
+
     public function create()
     {
+        // $products = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->get();
+        // if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1') {
         $offices = Office::where('head_office_id', '')->get();
-        $products = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)->get();
-        if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1') {
-            $products = Product::get();
-            return view('admin.transfer_request.create', compact('offices', 'products'));
-        }
+        $products = Product::get();
         return view('admin.transfer_request.create', compact('offices', 'products'));
+        // }
+        // return view('admin.transfer_request.create', compact('offices', 'products'));
     }
+
+    // insert sub category category using ajax request
+    public function getProduct(Request $request)
+    {
+        $transfer_from_office_id = $request->post('transfer_from_office_id');
+
+        // Fetch product IDs from product_allocates table
+        $productAllocates = DB::table('product_allocates')
+            ->where('office_id', $transfer_from_office_id)
+            ->where('location', 1)
+            ->pluck('product_id');  // Assuming 'product_id' is the column name
+
+        // Fetch products using the retrieved IDs
+        $products = DB::table('products')
+            ->whereIn('id', $productAllocates)
+            ->where('isassign', 1)
+            ->get();
+
+        // Generate the HTML for the dropdown
+        $html = '<option value="" selected disabled>Select One</option>';
+        foreach ($products as $product) {
+            $html .= '<option value="' . $product->id . '" product-title="' . $product->name . '"
+                  product-code="' . $product->product_code . '">
+                  ' . $product->name . ' (' . $product->product_code . ')</option>';
+        }
+
+        // Return the HTML as a response
+        echo $html;
+    }
+
 
     public function store(Request $request)
     {
@@ -82,7 +139,7 @@ class TransferRequestController extends Controller
         $data['request_to_office_id'] =  $request->transfer_to_office_id;
         $data['created_by'] = $admin->role->role;
         $data['created_date'] = date('Y-m-d h:i:s');
-        $data['status'] = 0;
+        $data['status'] = 1;
         $request = TransferRequest::create($data);
         if ($request) {
             $trRequest = TransferRequest::latest()->first();
@@ -92,10 +149,10 @@ class TransferRequestController extends Controller
                 $item['note'] = $note[$i];
                 TransferRequestDetails::create($item);
 
-                $productsAllocate = ProductAllocate::where('product_id', $product_id[$i])->first();
-                $productsAllocate['location'] = 3;
-                $productsAllocate['updated_date'] = date('Y-m-d h:i:s');
-                $productsAllocate->save();
+                // $productsAllocate = ProductAllocate::where('product_id', $product_id[$i])->first();
+                // $productsAllocate['location'] = 3;
+                // $productsAllocate['updated_date'] = date('Y-m-d h:i:s');
+                // $productsAllocate->save();
             }
         }
         return redirect()->route('transfer-request.index')->with('alert', ['messageType' => 'success', 'message' => 'Transfer request successfully done!']);
