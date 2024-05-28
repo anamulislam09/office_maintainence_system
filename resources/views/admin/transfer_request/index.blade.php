@@ -53,11 +53,12 @@
                           <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $request->to_office_name }}</td>
+                            <td>{{ $request->from_office_name }}</td>
                             <td>{{ $request->name }}</td>
                             <td>{{ $request->cat_name }}</td>
                             <td>{{ $request->created_by }}</td>
                             <td>{{ $request->created_date }}</td>
-                            <td>{{ $request->transfer_note }}</td>
+                            <td>{{ $request->transfer_not }}</td>
                             <td>
                               @if ($request->transfer_status == 1)
                                 <span class="badge badge-primary">Pending</span>
@@ -69,7 +70,6 @@
                               <span class="badge badge-danger">Rejected</span>
                               @endif
                             </td>
-
                           </tr>
                         @endforeach
                       </tbody>

@@ -44,49 +44,14 @@
                                         <table id="example1" class="table table-striped table-bordered table-centre">
                                             <thead>
                                                 <tr>
-                                                    <th>SN</th>
-                                                    <th>Product Name</th>
-                                                    <th>Product Code</th>
-                                                    {{-- <th>Status</th> --}}
-                                                    <th>Request</th>
+                                                    <th>transferred from</th>
+                                                    <th>transferred Date</th>
+                                                    <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="table_body">
-                                                {{-- @foreach ($assignments as $key => $assignment)
-                                                <tr>
-                                                    <td>{{ $key + 1 }}</td>
-                                                @foreach ($products as $product)
-                                                    @if ($product->id === $assignment->product_id)
-                                                    <td>{{ $product->name }}</td>
-                                                    <td>{{ $product->product_code }}</td>
-                                                    <td>
-                                                        @if ($product->status == 1)
-                                                            <span class="badge badge-primary">Active</span>
-                                                        @else
-                                                            <span class="badge badge-danger">Inactive</span>
-                                                        @endif
-                                                    </td>
-                                                        @break
-                                                    @endif
-                                                @endforeach
-                                                        <td>
-                                                            <span class="badge badge-warning">Pending</span>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('receive-request.accept', $assignment->id) }}"
-                                                                    class="btn btn-sm btn-info"
-                                                                    style="margin-right: 2px">Accepted
-                                                                </a>
-                                                                <a href="{{ route('receive-request.cancel', $assignment->id) }}"
-                                                                    class="btn btn-sm btn-danger"
-                                                                    style="margin-right: 2px">Cancel
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach --}}
+                                               
                                             </tbody>
                                         </table>
                                     </div>
@@ -98,7 +63,23 @@
             </div>
         </section>
     </div>
+
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title m-auto">All Issue Products</h4>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
 
 @section('script')
     <script>
@@ -116,56 +97,13 @@
             })
         })
 
+        $('body').on('click', '#transferRequest', function() {
+            let transfer_id = $(this).data('id');
 
-//         document.getElementById('getProductsBtn').addEventListener('click', function(event) {
-//             event.preventDefault(); // Prevent the default anchor tag behavior
+            $.get("/admin/transfer-request-to/products/" + transfer_id, function(data) {
+                $('.modal-body').html(data);
 
-//             // Construct the URL with JavaScript
-//             var officeId = this.getAttribute('data-office-id');
-//             var url = '{{ url('admin/transfer-request/get-data') }}/' + officeId;
-
-//             // Send AJAX request to retrieve products
-//             fetch(url)
-//                 .then(response => response.json())
-//                 .then(data => {
-//                     // console.log($data);
-//                     populateTable(data);
-//                 })
-//                 .catch(error => console.error('Error:', error));
-//         });
-
-//         function populateTable(data) {
-//     var tableBody = document.getElementById('table_body');
-//     tableBody.innerHTML = ''; // Clear previous content
-
-//     // Check if data is an array
-//     if (Array.isArray(data)) {
-//         // Iterate over each data item and create table rows
-//         data.forEach(function(item, index) {
-//             console.log(item.product_name);
-//             var row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td>${index + 1}</td>
-//                 <td>${item.product_name}</td>
-//                 <td>${item.product_code}</td>
-//                 <td>
-//                     ${item.status == 1 ? '<span class="badge badge-primary">Active</span>' : '<span class="badge badge-danger">Inactive</span>'}
-//                 </td>
-//                 <td>
-//                     <span class="badge badge-warning">Pending</span>
-//                 </td>
-//                 <td>
-//                     <div class="d-flex justify-content-center">
-//                         <a href="/receive-request/accept/${item.id}" class="btn btn-sm btn-info" style="margin-right: 2px">Accepted</a>
-//                         <a href="/receive-request/cancel/${item.id}" class="btn btn-sm btn-danger" style="margin-right: 2px">Cancel</a>
-//                     </div>
-//                 </td>
-//             `;
-//             tableBody.appendChild(row);
-//         });
-//     } else {
-//         console.error('Data is not an array:', data);
-//     }
-// }
+            })
+        })
     </script>
 @endsection

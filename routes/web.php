@@ -132,6 +132,9 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::get('/transfer-request/issue', [TransferRequestController::class, 'issue'])->name('transfer-request.issue');
         Route::get('/transfer-request/issued/{id}', [TransferRequestController::class, 'issued'])->name('transfer-request.issued');
         Route::get('/transfer-request/products/{id}', [TransferRequestController::class, 'showProduct']);
+        Route::get('/transfer-request-to/products/{id}', [ReceiveRequestController::class, 'ToshowProduct']);
+
+        Route::get('/transfer-request/approve/{id}', [ReceiveRequestController::class, 'approved'])->name('transfer-request.approve');
 
         Route::get('/transfer-request/create', [TransferRequestController::class, 'create'])->name('transfer-request.create');
         Route::post('/transfer-request/store', [TransferRequestController::class, 'store'])->name('transfer-request.store');

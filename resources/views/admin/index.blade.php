@@ -1,17 +1,19 @@
 @php
-use Illuminate\Support\Facades\DB;
-$privileges = DB::table('privileges')
-                ->join('menus', function ($join) {
-                    $join->on('privileges.menu_id', '=', 'menus.id');
-                })
-                ->where('privileges.role_id', Auth::guard('admin')->user()->type)
-                ->select('menus.menu_name')
-                ->get()->toArray();
-$privileges = array_column($privileges,'menu_name');
-// dd(Auth::guard('admin')->user()->type);
-// dd($privileges);
-$basicInfo = App\Models\BasicInfo::first();
-// dd(in_array('Total Users',$privileges));
+    use Illuminate\Support\Facades\DB;
+    use App\Models\ProductStatus;
+    $privileges = DB::table('privileges')
+        ->join('menus', function ($join) {
+            $join->on('privileges.menu_id', '=', 'menus.id');
+        })
+        ->where('privileges.role_id', Auth::guard('admin')->user()->type)
+        ->select('menus.menu_name')
+        ->get()
+        ->toArray();
+    $privileges = array_column($privileges, 'menu_name');
+    // dd(Auth::guard('admin')->user()->type);
+    // dd($privileges);
+    $basicInfo = App\Models\BasicInfo::first();
+    // dd(in_array('Total Users',$privileges));
 @endphp
 @extends('layouts.admin.master')
 @section('content')
@@ -35,25 +37,35 @@ $basicInfo = App\Models\BasicInfo::first();
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || Auth::guard('admin')->user()->type=='2' || in_array('Total Users',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' ||
+                            Auth::guard('admin')->user()->type == '2' ||
+                            in_array('Total Users', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <p>Total Users</p>
+                                    @php
+                                        $office = App\Models\Office::count();
+                                    @endphp
+                                    <p>Total Office</p>
+                                    <h3 class="text-center">{{ $office }}</h3>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">More info <i
+                                <a href="{{ route('office.index') }}" class="small-box-footer">More info <i
                                         class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Total Zone Office',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Total Zone Office', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-info">
                                 <div class="inner">
+                                    @php
+                                        $zonal_office = App\Models\Office::where('zonal_office_id', '')->count();
+                                    @endphp
                                     <p>Total Zone Office</p>
+                                    <h3 class="text-center">{{ $zonal_office }}</h3>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -63,11 +75,17 @@ $basicInfo = App\Models\BasicInfo::first();
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Total Branch Office',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Total Branch Office', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-success">
                                 <div class="inner">
+                                    @php
+                                        $branch_office = App\Models\Office::whereNotNull('head_office_id')
+                                            ->whereNotNull('zonal_office_id')
+                                            ->count();
+                                    @endphp
                                     <p>Total Branch Office</p>
+                                    <h3 class="text-center">{{ $branch_office }}</h3>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-stats-bars"></i>
@@ -77,26 +95,100 @@ $basicInfo = App\Models\BasicInfo::first();
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Product Live',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                @php
+                                    $brand = App\Models\Brand::count();
+                                @endphp
+                                <p>Total Brand</p>
+                                <h3>{{ $brand }}</h3>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('brand.index') }}" class="small-box-footer">More info <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box text-white" style="background-color:blueviolet">
+                            <div class="inner">
+                                @php
+                                    $supplier = App\Models\Supplier::count();
+                                @endphp
+                                <p>Total Supplier</p>
+                                <h3>{{ $supplier }}</h3>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('supplier.index') }}" class="small-box-footer">More info <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box text-white" style="background-color:rgb(59, 109, 9)">
+                            <div class="inner">
+                                @php
+                                    $category = App\Models\Category::count();
+                                @endphp
+                                <p>Total Category</p>
+                                <h3>{{ $category }}</h3>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('category.index') }}" class="small-box-footer">More info <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
                         <div class="col-lg-3 col-6">
-                            <div class="small-box bg-warning">
+                            <div class="small-box text-white" style="background-color:darkslategrey">
                                 <div class="inner">
-                                    <p>Total Live Product</p>
+                                    @php
+                                        $products = App\Models\Product::count();
+                                    @endphp
+                                    <p>Total Product</p>
+                                    <h3>{{ $products }}</h3>
                                 </div>
                                 <div class="icon">
-                                    <i class="ion ion-person-add"></i>
+                                    <i class="ion ion-bag"></i>
                                 </div>
-                                <a href="#" class="small-box-footer">More info <i
+                                <a href="{{ route('product.index') }}" class="small-box-footer">More info <i
                                         class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Total Products',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Total Products', $privileges))
                         <div class="col-lg-3 col-6">
-                            <div class="small-box bg-danger">
+                            <div class="small-box text-white" style="background-color:darkseagreen">
                                 <div class="inner">
-
-                                    <p>Total Products</p>
+                                    @php
+                                        // Subquery to get the maximum id and created_date for each product_id
+                                        $subquery = ProductStatus::selectRaw(
+                                            'MAX(id) as id, MAX(created_date) as last_created',
+                                        )->groupBy('product_id');
+                                        // Main query joining the product_statuses table with the subquery
+                                        $productWorkingStatuses = ProductStatus::joinSub(
+                                            $subquery,
+                                            'product_latest',
+                                            function ($join) {
+                                                $join->on('product_statuses.id', '=', 'product_latest.id');
+                                            },
+                                        )
+                                            ->where('status', 1)
+                                            ->count();
+                                    @endphp
+                                    <p>Total Working Products</p>
+                                    <h3>{{ $productWorkingStatuses }}</h3>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-pie-graph"></i>
@@ -106,11 +198,29 @@ $basicInfo = App\Models\BasicInfo::first();
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Product Not Working',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Not Working', $privileges))
                         <div class="col-lg-3 col-6">
-                            <div class="small-box bg-info">
+                            <div class="small-box text-white" style="background-color:lightskyblue">
                                 <div class="inner">
+                                    @php
+                                        // Subquery to get the maximum id and created_date for each product_id
+                                        $subquery = ProductStatus::selectRaw(
+                                            'MAX(id) as id, MAX(created_date) as last_created',
+                                        )->groupBy('product_id');
+
+                                        // Main query joining the product_statuses table with the subquery
+                                        $productNotWorking = ProductStatus::joinSub(
+                                            $subquery,
+                                            'product_latest',
+                                            function ($join) {
+                                                $join->on('product_statuses.id', '=', 'product_latest.id');
+                                            },
+                                        )
+                                            ->where('status', '0')
+                                            ->count();
+                                    @endphp
                                     <p>Not Working Products</p>
+                                    <h3>{{ $productNotWorking }}</h3>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -120,11 +230,30 @@ $basicInfo = App\Models\BasicInfo::first();
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Product Dead',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Dead', $privileges))
                         <div class="col-lg-3 col-6">
-                            <div class="small-box bg-success">
+                            <div class="small-box text-white" style="background-color:rgb(255, 153, 0)">
                                 <div class="inner">
-                                    <p>Product Dead</p>
+                                    @php
+                                        // Subquery to get the maximum id and created_date for each product_id
+                                        $subquery = ProductStatus::selectRaw(
+                                            'MAX(id) as id, MAX(created_date) as last_created',
+                                        )->groupBy('product_id');
+
+                                        // Main query joining the product_statuses table with the subquery
+                                        $totalDeadProduct = ProductStatus::joinSub(
+                                            $subquery,
+                                            'product_latest',
+                                            function ($join) {
+                                                $join->on('product_statuses.id', '=', 'product_latest.id');
+                                            },
+                                        )
+                                            ->where('status', '=' ,'-1')
+                                            ->count();
+                                    @endphp
+                                    <p>Total Dead Product</p>
+                                    <h3>{{ $totalDeadProduct }}</h3>
+
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-stats-bars"></i>
@@ -134,7 +263,7 @@ $basicInfo = App\Models\BasicInfo::first();
                             </div>
                         </div>
                     @endif
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('New Customers',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('New Customers', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-warning">
                                 <div class="inner">
@@ -150,7 +279,7 @@ $basicInfo = App\Models\BasicInfo::first();
                     @endif
                 </div>
                 <div class="row">
-                    @if(Auth::guard('admin')->user()->type=='superadmin' || in_array('Latest Orders',$privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Latest Orders', $privileges))
                         <section class="col-lg-7 connectedSortable">
                             <div class="card">
                                 <div class="card-header border-transparent">
@@ -277,7 +406,7 @@ $basicInfo = App\Models\BasicInfo::first();
                                             data-toggle="dropdown" data-offset="-52">
                                             <i class="fas fa-bars"></i>
                                         </button>
-                                         <div class="dropdown-menu" role="menu">
+                                        <div class="dropdown-menu" role="menu">
                                             <a href="#" class="dropdown-item">Add new event</a>
                                             <a href="#" class="dropdown-item">Clear events</a>
                                             <div class="dropdown-divider"></div>
@@ -297,7 +426,7 @@ $basicInfo = App\Models\BasicInfo::first();
                             </div>
                         </div>
                     </section>
-                </div> 
+                </div>
             </div>
         </section>
     </div>

@@ -39,6 +39,7 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Product Name</th>
+                                                    <th>Product code</th>
                                                     <th>Category</th>
                                                     <th>SubCategory</th>
                                                     <th>Office Name</th>
@@ -59,6 +60,7 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $product->name }}</td>
+                                                        <td>{{ $product->product_code }}</td>
                                                         <td>{{ $category->name }}</td>
                                                         <td>{{ $sub_cat ? $sub_cat->name : '' }}</td>
                                                         <td>{{ $office->title }}</td>

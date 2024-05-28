@@ -37,50 +37,53 @@
                                         <table id="example1" class="table table-striped table-bordered table-centre">
                                             <thead>
                                                 <tr>
-                                                    {{-- <th>SN</th> --}}
                                                     <th>Transfer To</th>
                                                     <th>Created By</th>
                                                     <th>Issue date</th>
                                                     <th>Status</th>
-                                                    {{-- @if (Auth::guard('admin')->user()->office_id !== '0' || Auth::guard('admin')->user()->office_id !== '1') --}}
                                                     <th>Action</th>
-                                                    {{-- @endif --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    {{-- <td>{{ 1 </td> --}}
-                                                    <td>{{ $office_name }}</td>
-                                                    <td>{{ $transferRequests->created_by }}</td>
-                                                    <td>{{ $transferRequests->created_date }}</td>
-                                                    <td>
-                                                        @if ($transferRequests->status == 1)
-                                                            <span class="badge badge-primary">Pending</span>
-                                                        @elseif ($transferRequests->status == 2)
-                                                            <span class="badge badge-info">Assigned</span>
-                                                        @elseif ($transferRequests->status == 3)
-                                                            <span class="badge badge-success">Accepted</span>
-                                                        @else
-                                                            <span class="badge badge-danger">Rejected</span>
-                                                        @endif
-                                                    </td>
-                                                    </td>
-                                                    {{-- @if (Auth::guard('admin')->user()->office_id !== '0' || Auth::guard('admin')->user()->office_id !== '1') --}}
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="#" id="transferRequest"
-                                                                data-id="{{ $transferRequests->id }}" data-toggle="modal"
-                                                                data-target="#myModal" class="btn btn-sm btn-success"
-                                                                style="margin-right: 2px">
-                                                                <i class="fas fa fa-eye"></i>
-                                                            </a>
-                                                            <a href="{{ route('transfer-request.issued', $transferRequests->id) }}"
-                                                                class="btn btn-sm btn-info" style="margin-right: 2px">
-                                                                Issue
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                    {{-- @endif --}}
+                                                @if ($transferRequests)
+                                                    @php
+                                                        $office_name = App\Models\Office::where(
+                                                            'id',
+                                                            $transferRequests->request_to_office_id,
+                                                        )->value('title');
+                                                    @endphp
+                                                    <tr>
+                                                        <td>{{ $office_name }}</td>
+                                                        <td>{{ $transferRequests->created_by }}</td>
+                                                        <td>{{ $transferRequests->created_date }}</td>
+                                                        <td>
+                                                            @if ($transferRequests->status == 1)
+                                                                <span class="badge badge-primary">Pending</span>
+                                                            @elseif ($transferRequests->status == 2)
+                                                                <span class="badge badge-info">Assigned</span>
+                                                            @elseif ($transferRequests->status == 3)
+                                                                <span class="badge badge-success">Accepted</span>
+                                                            @else
+                                                                <span class="badge badge-danger">Rejected</span>
+                                                            @endif
+                                                        </td>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                <a href="#" id="transferRequest"
+                                                                    data-id="{{ $transferRequests->id }}"
+                                                                    data-toggle="modal" data-target="#myModal"
+                                                                    class="btn btn-sm btn-success"
+                                                                    style="margin-right: 2px">
+                                                                    <i class="fas fa fa-eye"></i>
+                                                                </a>
+                                                                <a href="{{ route('transfer-request.issued', $transferRequests->id) }}"
+                                                                    class="btn btn-sm btn-info" style="margin-right: 2px">
+                                                                    Issue
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                @endif
                                                 </tr>
                                             </tbody>
                                         </table>
