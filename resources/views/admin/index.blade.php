@@ -167,6 +167,42 @@
                             </div>
                         </div>
                     @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box text-white" style="background-color:rgb(2, 53, 53)">
+                                <div class="inner">
+                                    @php
+                                        $assign_products = App\Models\Product::where('isassign', 1)->count();
+                                    @endphp
+                                    <p>Total Assign Product</p>
+                                    <h3>{{ $assign_products }}</h3>
+                                </div>  
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{{ route('product.index') }}" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box text-white" style="background-color:rgb(2, 29, 29)">
+                                <div class="inner">
+                                    @php
+                                        $assign_not_products = App\Models\Product::where('isassign', 0)->count();
+                                    @endphp
+                                    <p>Total Not Assign Product</p>
+                                    <h3>{{ $assign_not_products }}</h3>
+                                </div>      
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{{ route('product.index') }}" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
                     @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Total Products', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box text-white" style="background-color:darkseagreen">

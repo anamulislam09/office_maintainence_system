@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('transfer_request_id');
             $table->integer('product_id');
             $table->date('product_issue');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
