@@ -10,9 +10,6 @@ class OfficeController extends Controller
 {
     public function index()
     {
-        
-        
-        
         if(Auth::guard('admin')->user()->office_id == 0){
             $data = Office::orderBy('id', 'desc')->get();
             return view('admin.office.index', compact('data'));

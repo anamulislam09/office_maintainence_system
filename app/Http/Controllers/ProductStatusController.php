@@ -10,6 +10,7 @@ use App\Models\ProductAllocate;
 use App\Models\ProductStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductStatusController extends Controller
 {
@@ -17,15 +18,58 @@ class ProductStatusController extends Controller
     {
         if (Auth::guard('admin')->user()->office_id == 0) {
             $productStatus = ProductStatus::orderBy('id', 'desc')->get();
-            // return view('admin.products.product_status.index', compact('productStatus'));
+            $offices = Office::get();
+            $products = Product::where('isassign', 1)->get();
+            // return view('admin.products.product_status.index', compact('productStatus', 'offices', 'products'));
         } elseif (Auth::guard('admin')->user()->office_id == 1) {
-            $productStatus = ProductStatus::orderBy('id', 'desc')->get();
-            // return view('admin.products.product_status.index', compact('productStatus'));
+            $productStatus = ProductStatus::where('office_id', Auth::guard('admin')->user()->office_id)->orderBy('id', 'desc')->get();
+            $offices = Office::get();
+            $products = Product::where('isassign', 1)->get();
+            // return view('admin.products.product_status.index', compact('productStatus', 'offices', 'products'));
         } else {
             $productStatus = ProductStatus::where('office_id', Auth::guard('admin')->user()->office_id)->orderBy('id', 'desc')->get();
+            $offices = Office::where('id', Auth::guard('admin')->user()->office_id)->get();
+            $products = Product::where('isassign', 1)->get();
             // return view('admin.products.product_status.index', compact('productStatus'));
         }
-        return view('admin.products.product_status.index', compact('productStatus'));
+        return view('admin.products.product_status.index', compact('productStatus', 'offices', 'products'));
+    }
+
+    public function filterProductStatus($id)
+    {
+        if ($id == 0) {
+            $productStatus = DB::table('product_statuses')
+                ->join('products', 'products.id', '=', 'product_statuses.product_id')
+                ->join('categories', 'products.cat_id', '=', 'categories.id')
+                ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
+                ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
+                ->orderBy('products.id', 'desc')
+                ->get();
+        } else {
+            $productStatus = DB::table('product_statuses')
+                ->join('products', 'products.id', '=', 'product_statuses.product_id')
+                ->join('categories', 'products.cat_id', '=', 'categories.id')
+                ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
+                ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
+                ->where('product_statuses.office_id', $id)
+                ->orderBy('products.id', 'desc')
+                ->get();
+        }
+
+        // $productStatus = DB::table('product_statuses')
+        //     ->join('products', 'products.id', '=', 'product_statuses.product_id')
+        //     ->join('categories', 'products.cat_id', '=', 'categories.id')
+        //     ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
+        //     ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
+        //     ->where(function ($query) use ($id) {
+        //         $query->where('product_statuses.office_id', $id)
+        //             ->orWhere('product_statuses.product_id', $id);
+        //     })
+        //     ->orderBy('products.id', 'desc')
+        //     ->get();
+
+
+        return response()->json($productStatus, 200);
     }
 
     public function create()
@@ -71,7 +115,7 @@ class ProductStatusController extends Controller
                     'created_by' => $admin->role->role,
                 ]);
             }
-        }else{
+        } else {
             return redirect()->back()->with('alert', ['messageType' => 'danger', 'message' => 'Product Not Found!']);
         }
 
