@@ -2,16 +2,7 @@
 @section('content')
     @php
         $basicInfo = App\Models\BasicInfo::first();
-        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)
-            ->whereNotNull('head_office_id')
-            ->whereNotNull('zonal_office_id')
-            ->exists();
-
-        if ($branch_office_exists) {
-            dd('exist');
-        } else {
-            dd('No');
-        }
+        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)->where('head_office_id','!=', '')->where('zonal_office_id', '!=', '')->exists();
     @endphp
     <div class="content-wrapper">
         <div class="content-header">
@@ -44,7 +35,7 @@
                             <div class="card-body">
                                 <div class="card-header">
                                     <div class="row">
-                                        @if (empty($branch_office))
+                                        @if (!$branch_office_exists)
                                             <div class="col-lg-3">
                                                 <select name="office_id" id="office_id"
                                                     class="form-control form-control-sm select2">
