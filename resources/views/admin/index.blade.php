@@ -37,9 +37,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                            Auth::guard('admin')->user()->type == '2' ||
-                            in_array('Total Users', $privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-danger">
                                 <div class="inner">
@@ -57,7 +55,7 @@
                             </div>
                         </div>
                     @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Total Zone Office', $privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-info">
                                 <div class="inner">
@@ -75,7 +73,7 @@
                             </div>
                         </div>
                     @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Total Branch Office', $privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-success">
                                 <div class="inner">
@@ -95,61 +93,83 @@
                             </div>
                         </div>
                     @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                @php
-                                    $brand = App\Models\Brand::count();
-                                @endphp
-                                <p>Total Brand</p>
-                                <h3>{{ $brand }}</h3>
+                    @if (Auth::guard('admin')->user()->type != 'superadmin' && Auth::guard('admin')->user()->type != '2')
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    @php
+                                        $branch_office = App\Models\Office::whereNotNull('head_office_id')
+                                            ->where('zonal_office_id', Auth::guard('admin')->user()->office_id)
+                                            ->count();
+                                    @endphp
+                                    <p>Total Branch Office</p>
+                                    <h3 class="text-center">{{ $branch_office }}</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-stats-bars"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-bag"></i>
-                            </div>
-                            <a href="{{ route('brand.index') }}" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
                         </div>
-                    </div>
-                @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box text-white" style="background-color:blueviolet">
-                            <div class="inner">
-                                @php
-                                    $supplier = App\Models\Supplier::count();
-                                @endphp
-                                <p>Total Supplier</p>
-                                <h3>{{ $supplier }}</h3>
+                    @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    @php
+                                        $brand = App\Models\Brand::count();
+                                    @endphp
+                                    <p>Total Brand</p>
+                                    <h3>{{ $brand }}</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{{ route('brand.index') }}" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-bag"></i>
-                            </div>
-                            <a href="{{ route('supplier.index') }}" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
                         </div>
-                    </div>
-                @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box text-white" style="background-color:rgb(59, 109, 9)">
-                            <div class="inner">
-                                @php
-                                    $category = App\Models\Category::count();
-                                @endphp
-                                <p>Total Category</p>
-                                <h3>{{ $category }}</h3>
+                    @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box text-white" style="background-color:blueviolet">
+                                <div class="inner">
+                                    @php
+                                        $supplier = App\Models\Supplier::count();
+                                    @endphp
+                                    <p>Total Supplier</p>
+                                    <h3>{{ $supplier }}</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{{ route('supplier.index') }}" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-bag"></i>
-                            </div>
-                            <a href="{{ route('category.index') }}" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
                         </div>
-                    </div>
-                @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                    @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' ||
+                            Auth::guard('admin')->user()->type == '2' ||
+                            in_array('Product Live', $privileges))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box text-white" style="background-color:rgb(59, 109, 9)">
+                                <div class="inner">
+                                    @php
+                                        $category = App\Models\Category::count();
+                                    @endphp
+                                    <p>Total Category</p>
+                                    <h3>{{ $category }}</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{{ route('category.index') }}" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
                         <div class="col-lg-3 col-6">
                             <div class="small-box text-white" style="background-color:darkslategrey">
                                 <div class="inner">
@@ -167,7 +187,9 @@
                             </div>
                         </div>
                     @endif
-                    @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Product Live', $privileges))
+                    @if (Auth::guard('admin')->user()->type == 'superadmin' ||
+                            Auth::guard('admin')->user()->type == '2' ||
+                            in_array('Product Live', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box text-white" style="background-color:rgb(2, 53, 53)">
                                 <div class="inner">
@@ -176,7 +198,7 @@
                                     @endphp
                                     <p>Total Assign Product</p>
                                     <h3>{{ $assign_products }}</h3>
-                                </div>  
+                                </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
                                 </div>
@@ -194,7 +216,7 @@
                                     @endphp
                                     <p>Total Not Assign Product</p>
                                     <h3>{{ $assign_not_products }}</h3>
-                                </div>      
+                                </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
                                 </div>
@@ -284,7 +306,7 @@
                                                 $join->on('product_statuses.id', '=', 'product_latest.id');
                                             },
                                         )
-                                            ->where('status', '=' ,'-1')
+                                            ->where('status', '=', '-1')
                                             ->count();
                                     @endphp
                                     <p>Total Dead Product</p>

@@ -35,47 +35,70 @@ class ProductStatusController extends Controller
         return view('admin.products.product_status.index', compact('productStatus', 'offices', 'products'));
     }
 
-    public function filterProductStatus($id)
+    public function filterProductStatus($office_id, $product_id)
     {
-        if ($id == 0) {
-            $productStatus = DB::table('product_statuses')
+        if ($office_id == 0 && $product_id == 0) {
+            $data['productStatus'] = DB::table('product_statuses')
                 ->join('products', 'products.id', '=', 'product_statuses.product_id')
                 ->join('categories', 'products.cat_id', '=', 'categories.id')
                 ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
                 ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
-                ->orderBy('products.id', 'desc')
+                ->orderBy('product_statuses.created_date', 'desc')
                 ->get();
+            $products = Product::where('isassign', 1)->get();
+
+            $data['product'] = '<option value="" selected disabled>Select One</option>';
+            $data['product'] .= '<option value="0" >All Products</option>';
+            foreach ($products as $product) {
+                $data['product'] .= '<option value="' . $product->id . '" product-title="' . $product->name . '"
+                          product-code="' . $product->product_code . '">
+                          ' . $product->name . ' (' . $product->product_code . ')</option>';
+            }
         } else {
-            $productStatus = DB::table('product_statuses')
+            
+            $data['productStatus'] = DB::table('product_statuses')
                 ->join('products', 'products.id', '=', 'product_statuses.product_id')
                 ->join('categories', 'products.cat_id', '=', 'categories.id')
                 ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
                 ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
-                ->where('product_statuses.office_id', $id)
-                ->orderBy('products.id', 'desc')
+                ->where('product_statuses.office_id', $office_id)
+                ->orderBy('product_statuses.created_date', 'desc')
                 ->get();
+
+            // $data['productStatus'] = DB::table('product_statuses')
+            //     ->join('products', 'products.id', '=', 'product_statuses.product_id')
+            //     ->join('categories', 'products.cat_id', '=', 'categories.id')
+            //     ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
+            //     ->select(
+            //         'products.name as product_name',
+            //         'offices.title as office_name',
+            //         'products.*',
+            //         'product_statuses.*',
+            //         'categories.name as category_name'
+            //     )
+            //     ->where(function ($query) use ($product_id, $office_id) {
+            //         $query->where('product_statuses.product_id', $product_id)
+            //             ->orWhere('product_statuses.office_id', $office_id);
+            //     })
+            //     ->orderBy('product_statuses.created_date', 'desc')
+            //     ->get();
+
+           
         }
-
-        // $productStatus = DB::table('product_statuses')
-        //     ->join('products', 'products.id', '=', 'product_statuses.product_id')
-        //     ->join('categories', 'products.cat_id', '=', 'categories.id')
-        //     ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
-        //     ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
-        //     ->where(function ($query) use ($id) {
-        //         $query->where('product_statuses.office_id', $id)
-        //             ->orWhere('product_statuses.product_id', $id);
-        //     })
-        //     ->orderBy('products.id', 'desc')
-        //     ->get();
-
-
-        return response()->json($productStatus, 200);
+        return response()->json($data, 200);
     }
 
     public function create()
     {
         $categories = Category::where('main_cat_id', null)->where('status', 1)->get();
         return view('admin.products.product_status.create', compact('categories'));
+    }
+    public function filterProductList($office_id)
+    {
+        $productList = Product::query()->join('product_allocates', 'product_allocates.product_id','=','products.id');
+        if($office_id) $productList = $productList->where('product_allocates.office_id', $office_id);
+        $productList = $productList->select('products.name','products.id','products.product_code')->get();
+        return response()->json($productList, 200);
     }
 
     public function show(Request $request)

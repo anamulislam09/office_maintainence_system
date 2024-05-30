@@ -189,7 +189,7 @@
                         </ul>
                     </li>
                 @endif
-                @if (Auth::guard('admin')->user()->type == 'superadmin' ||
+                {{-- @if (Auth::guard('admin')->user()->type == 'superadmin' ||
                         Auth::guard('admin')->user()->office_id == '1' ||
                         in_array('accessory', $privileges))
                     <li class="nav-item">
@@ -199,7 +199,7 @@
                             <p>Accessory Manage</p>
                         </a>
                     </li>
-                @endif
+                @endif --}}
                 @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('Supplier', $privileges))
                     <li
                         class="nav-item {{ Request::routeIs('supplier.index') || Request::routeIs('supplier.create') || Request::routeIs('supplier.edit') ? 'menu-open' : '' }}">

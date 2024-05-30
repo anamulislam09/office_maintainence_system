@@ -2,7 +2,10 @@
 @section('content')
     @php
         $basicInfo = App\Models\BasicInfo::first();
-        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)->where('head_office_id','!=', '')->where('zonal_office_id', '!=', '')->exists();
+        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)
+            ->where('head_office_id', '!=', '')
+            ->where('zonal_office_id', '!=', '')
+            ->exists();
     @endphp
     <div class="content-wrapper">
         <div class="content-header">
@@ -37,11 +40,10 @@
                                     <div class="row">
                                         @if (!$branch_office_exists)
                                             <div class="col-lg-3">
-                                                <select name="office_id" id="office_id"
-                                                    class="form-control form-control-sm select2">
-                                                    <option value="" selected disabled>Select Office</option>
+                                                <select name="office_id" id="office_id" class="form-control form-control-sm">
+    
                                                     <option value="0"> All office</option>
-                                                    @if (Auth::guard('admin')->user()->office_id == 0 && Auth::guard('admin')->user()->office_id == 1)
+                                                    @if (Auth::guard('admin')->user()->office_id == 1 || Auth::guard('admin')->user()->office_id == 1)
                                                         @foreach ($offices as $office)
                                                             <option value="{{ $office->id }}">{{ $office->title }}
                                                             </option>
@@ -63,8 +65,6 @@
                                                             @endforeach
                                                         @endforeach
                                                     @endif
-
-
                                                 </select>
                                             </div>
                                         @else
@@ -75,12 +75,10 @@
                                             <select name="product_id" id="product_id"
                                                 class="form-control form-control-sm select2">
                                                 <option value="" selected disabled>Select Product</option>
-                                                <option value="0"> All office</option>
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">{{ $product->name }} (
-                                                        {{ $product->product_code }})</option>
-                                                @endforeach
                                             </select>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <button class="btn btn-primary" id="filter">Filter</button>
                                         </div>
                                     </div>
                                 </div>
@@ -93,54 +91,14 @@
                                                     <th>Product Name</th>
                                                     <th>Product code</th>
                                                     <th>Category</th>
-                                                    <th>SubCategory</th>
                                                     <th>Office Name</th>
                                                     <th>Created Date</th>
                                                     <th>Created By</th>
                                                     <th>Status</th>
                                                 </tr>
                                             </thead>
-                                            {{-- <tbody id="tbody1"></tbody> --}}
                                             <tbody id="tbody2">
-                                                @foreach ($productStatus as $key => $item)
-                                                    @php
-                                                        $product = App\Models\Product::where(
-                                                            'id',
-                                                            $item->product_id,
-                                                        )->first();
-                                                        $category = App\Models\Category::where('id', $product->cat_id)
-                                                            ->where('main_cat_id', null)
-                                                            ->first();
-                                                        $sub_cat = App\Models\Category::where(
-                                                            'id',
-                                                            $product->sub_cat_id,
-                                                        )->first();
-                                                        $office = App\Models\Office::where(
-                                                            'id',
-                                                            $item->office_id,
-                                                        )->first();
-
-                                                    @endphp
-                                                    <tr>
-                                                        <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $product->name }}</td>
-                                                        <td>{{ $product->product_code }}</td>
-                                                        <td>{{ $category->name }}</td>
-                                                        <td>{{ $sub_cat ? $sub_cat->name : '' }}</td>
-                                                        <td>{{ $office->title }}</td>
-                                                        <td>{{ $item->created_date }}</td>
-                                                        <td>{{ $item->created_by }}</td>
-                                                        <td>
-                                                            @if ($item->status == 1)
-                                                                <span class="badge badge-primary">Live</span>
-                                                            @elseif ($item->status == 0)
-                                                                <span class="badge badge-warning">Not Working</span>
-                                                            @else
-                                                                <span class="badge badge-danger">Dead</span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
+                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -149,6 +107,7 @@
                         </div>
                     </section>
                 </div>
+
             </div>
         </section>
     </div>
@@ -159,60 +118,85 @@
     <script>
         $('.select2').select2();
         $(function() {
-            $("#office_id").change(function() {
-                resetTable()
-                // $("#tbody2").hide();
-                var office_id = $(this).val();
-                customerLeader(office_id);
+            onLoad();
+            $('#office_id').on('change', function() {
+                loadProduct($(this).val());
             });
-
-            $("#product_id").change(function() {
-                resetTable()
-                // $("#tbody2").hide();
-                var product_id = $(this).val();
-                customerLeader(product_id);
+            $('#filter').on('click', function() {
+                var office_id = $('#office_id').val();
+                var product_id = $('#product_id').val(); 
+                productStatus(office_id, product_id);
             });
         });
 
-        function resetTable() {
-            // Clear the content of the table body
-            $('#tbody2').empty();
-            // Optionally, hide the table body if necessary
-            $("#tbody2").hide();
+        function onLoad(){
+            var office_id = "{{ Auth('admin')->user()->office_id }}";
+            var product_id = 0; 
+            $('#office_id').val(office_id);
+            loadProduct(office_id);
+            var product_id = $('#product_id').val(); 
+            productStatus(office_id, product_id);
         }
 
-        function customerLeader(id) {
+        function loadProduct(office_id) {
             $.ajax({
                 type: "GET",
-                url: "{{ url('admin/product-status') }}/" + id,
+                url: "{{ url('admin/product-list') }}/" + office_id,
                 dataType: "json",
                 success: function(res) {
+                    let option = `<option value="0" selected> All Products</option>`;
+                    res.forEach(element => {
+                        option += `<option value="${element.id}">${element.name}(${element.product_code})</option>`;
+                    });
+                    $('#product_id').html(option);
+                }
+            })
+        }
+
+        function productStatus(office_id, product_id) {
+            $.ajax({
+                type: "GET",
+                url: "{{ url('admin/product-status') }}/" + office_id + '/' + product_id,
+                dataType: "json",
+                success: function(res) {
+                    $('#product_id').html(res.product);
                     if (res.productStatus && res.productStatus.length > 0) {
                         var tbody = '';
                         res.productStatus.forEach((element, index) => {
-                            tbody += '<tr>'
-                            tbody += '<td>' + (index + 1) + '</td>'
-                            tbody += '<td>' + element.product_name + '</td>'
-                            tbody += '<td>' + element.product_code + '</td>'
-                            tbody += '<td>' + element.category_name + '</td>'
-                            tbody += '<td>' + element.office_name + '</td>'
-                            tbody += '<td>' + element.created_date + '</td>'
-                            tbody += '<td>' + element.created_by + '</td>'
-                            tbody += '<td>' + element.status + '</td>'
-                            tbody += '</tr>'
+                            tbody += '<tr>';
+                            tbody += '<td>' + (index + 1) + '</td>';
+                            tbody += '<td>' + element.product_name + '</td>';
+                            tbody += '<td>' + element.product_code + '</td>';
+                            tbody += '<td>' + element.category_name + '</td>';
+                            tbody += '<td>' + element.office_name + '</td>';
+                            tbody += '<td>' + element.created_date + '</td>';
+                            tbody += '<td>' + element.created_by + '</td>';
+                            tbody += '<td>';
+
+                            if (element.status == 0) {
+                                tbody += '<span class="badge badge-warning">Not Working</span>';
+                            } else if (element.status == 1) {
+                                tbody += '<span class="badge badge-primary">Working</span>';
+                            } else {
+                                tbody += '<span class="badge badge-danger">Dead</span>';
+                            }
+
+                            tbody += '</td>';
+                            tbody += '</tr>';
                         });
+
                         $('#tbody2').html(tbody);
-                        $("#tbody2").show();
-                        $("#tbody2").reset();
+                        // $("#tbody2").show();
+                        // $("#tbody2").reset();
                     } else {
-                        // Handle case where productStatus is empty
                         $('#tbody2').html(
                             '<tr><td colspan="8" class="text-center">No data available</td></tr>');
-                        $("#tbody2").show();
-                        $("#tbody2").hide();
+                        // $("#tbody2").show();
+                        // $("#tbody2").hide();
                     }
                 }
             });
         }
+
     </script>
 @endsection

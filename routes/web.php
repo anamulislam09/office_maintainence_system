@@ -125,7 +125,8 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::post('/product-status/show', [ProductStatusController::class, 'show'])->name('product-status.show');
         Route::get('/product-status/create', [ProductStatusController::class, 'create'])->name('product-status.create');
         Route::post('/product-status/store', [ProductStatusController::class, 'store'])->name('product-status.store');
-        Route::get('/product-status/{id}', [ProductStatusController::class, 'filterProductStatus'])->name('product-status');
+        Route::get('/product-status/{office_id}/{product_id}', [ProductStatusController::class, 'filterProductStatus']);
+        Route::get('/product-list/{office_id}', [ProductStatusController::class, 'filterProductList']);
 
         //    Trtansfer Request route start here ---->
         Route::get('/transfer-request/all', [TransferRequestController::class, 'index'])->name('transfer-request.index');

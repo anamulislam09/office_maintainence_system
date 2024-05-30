@@ -45,7 +45,7 @@
                                                     <th>Assign Date</th>
                                                     {{-- <th>Status</th> --}}
                                                     <th>Location</th>
-                                                    <th>Action</th>
+                                                    {{-- <th>Action</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -77,14 +77,14 @@
                                                                 <span class="badge badge-warning">monitor</span>
                                                             @endif
                                                         </td>
-                                                        <td>
+                                                        {{-- <td>
                                                             <div class="d-flex justify-content-center">
                                                                 <a href="{{ route('product-allocate.edit', $assignment->id) }}"
                                                                     class="btn btn-sm btn-info" style="margin-right: 2px">
                                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                                 </a>
 
-                                                                {{-- <form
+                                                                <form
                                                                     action="{{ route('product-allocate.destroy', $assignment->id) }}"
                                                                     method="post">
                                                                     @csrf
@@ -92,9 +92,9 @@
                                                                     <button type="submit" class="btn btn-sm btn-danger">
                                                                         <i class="fa-solid fa-trash"></i>
                                                                     </button>
-                                                                </form> --}}
+                                                                </form>
                                                             </div>
-                                                        </td>
+                                                        </td> --}}
                                                     </tr>
                                                 @endforeach
                                             </tbody>
