@@ -2,11 +2,6 @@
 @section('content')
     @php
         $basicInfo = App\Models\BasicInfo::first();
-        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)
-            ->where('head_office_id', '!=', '')
-            ->where('zonal_office_id', '!=', '')
-            ->exists();
-        // dd($branch_office_exists);
     @endphp
     <div class="content-wrapper">
         <div class="content-header">
@@ -14,12 +9,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Products Status</h1>
+                        <h1 class="m-0">Product Monitors</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Products</li>
+                            <li class="breadcrumb-item active">Monitors</li>
                         </ol>
                     </div>
                 </div>
@@ -33,54 +28,36 @@
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
                                     <a href="#"class="btn btn-light shadow rounded m-0">
-                                        <span>Status Update</span></i></a>
+                                        <span> Monitors </span></i></a>
                                 </h3>
                             </div>
                             <div class="card-body">
                                 <div class="card-header">
                                     <div class="row">
-                                        <div class="col-lg-3 col-md-3 col-sm-6"
-                                            @if ($branch_office_exists) hidden @endif>
-                                            <select name="office_id" id="office_id" class="form-control form-control-sm">
-                                                @if (Auth::guard('admin')->user()->office_id == 0 || Auth::guard('admin')->user()->office_id == 1)
-                                                    <option value="0">All office</option>
-                                                    @foreach ($offices as $office)
-                                                        <option value="{{ $office->id }}" @selected($office->id == Auth::guard('admin')->user()->office_id)>
-                                                            {{ $office->title }}</option>
-                                                    @endforeach
-                                                @else
-                                                    <option value="{{ $offices->id }}" @selected($offices->id == Auth::guard('admin')->user()->office_id)>
-                                                        {{ $offices->title }}
-                                                    </option>
-                                                    @php
-                                                        $branch_offices = App\Models\Office::where(
-                                                            'zonal_office_id',
-                                                            $offices->id,
-                                                        )->get();
-                                                    @endphp
-                                                    @foreach ($branch_offices as $branch_office)
-                                                        <option value="{{ $branch_office->id }}"
-                                                            @if ($branch_office->id == Auth::guard('admin')->user()->office_id) selected @endif>
-                                                            {{ $branch_office->title }}
-                                                        </option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-
-                                        </div>
                                         <div class="col-lg-3 col-md-3 col-sm-6">
+                                            <select name="product_id" id="product_id"
+                                                class="form-control form-control-sm select2">
+                                                <option value="0" selected> All Products</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">{{ $product->name }}
+                                                        ({{ $product->product_code }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        {{-- <div class="col-lg-3 col-md-3 col-sm-6">
                                             <select name="product_id" id="product_id"
                                                 class="form-control form-control-sm select2">
                                             </select>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-sm-12">
                                             <button class="btn btn-primary btn-sm" id="filter">Filter</button>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                                 <div class="bootstrap-data-table-panel">
                                     <div class="table-responsive">
-                                        <table id="example1" class="table table-striped table-bordered table-centre">
+                                        <table id="example1" class="table table-striped table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th>SN</th>
@@ -93,7 +70,8 @@
                                                     <th>Status</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="tbody2">
+                                            <tbody id="item-table">
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -110,51 +88,19 @@
     <script>
         $('.select2').select2();
         $(function() {
-            onLoad();
-            $('#office_id').on('change', function() {
-                loadProduct($(this).val());
-            });
-            $('#filter').on('click', function() {
-                var office_id = $('#office_id').val();
-                var product_id = $('#product_id').val();
-                // alert(office_id);
-                // alert(product_id);
-                productStatus(office_id, product_id);
+            // alert(0);
+            $('#product_id').on('change', function() {
+                // alert($(this).val());
+                productStatus($(this).val());
             });
         });
 
-        function onLoad() {
-            var office_id = "{{ Auth('admin')->user()->office_id }}";
-            var product_id = 0;
-            $('#office_id').val(office_id);
-            loadProduct(office_id);
-            var product_id = $('#product_id').val();
-            productStatus(office_id, product_id);
-        }
-
-        function loadProduct(office_id) {
+        function productStatus(product_id) {
             $.ajax({
                 type: "GET",
-                url: "{{ url('admin/product-list') }}/" + office_id,
+                url: "{{ url('admin/product-monitors/all') }}/" + product_id,
                 dataType: "json",
                 success: function(res) {
-                    let option = `<option value="0" selected> All Products</option>`;
-                    res.forEach(element => {
-                        option +=
-                            `<option value="${element.id}">${element.name}(${element.product_code})</option>`;
-                    });
-                    $('#product_id').html(option);
-                }
-            })
-        }
-
-        function productStatus(office_id, product_id) {
-            $.ajax({
-                type: "GET",
-                url: "{{ url('admin/product-status') }}/" + office_id + '/' + product_id,
-                dataType: "json",
-                success: function(res) {
-                    $('#product_id').html(res.product);
                     if (res.productStatus && res.productStatus.length > 0) {
                         var tbody = '';
                         res.productStatus.forEach((element, index) => {
@@ -177,14 +123,10 @@
                             tbody += '</td>';
                             tbody += '</tr>';
                         });
-                        $('#tbody2').html(tbody);
-                        // $("#tbody2").show();
-                        // $("#tbody2").reset();
+                        $('#item-table').html(tbody);
                     } else {
-                        $('#tbody2').html(
+                        $('#item-table').html(
                             '<tr><td colspan="8" class="text-center">No data available</td></tr>');
-                        // $("#tbody2").show();
-                        // $("#tbody2").hide();
                     }
                 }
             });

@@ -14,7 +14,7 @@ class ProductAllocateController extends Controller
         // $assign_products = ProductAllocate::orderBy('id', 'desc')->get();
         $assignments = ProductAllocate::join('products', 'product_allocates.product_id', '=', 'products.id')
             ->join('offices', 'product_allocates.office_id', '=', 'offices.id')->where('product_allocates.location', '!=', 4)
-            ->select('product_allocates.*', 'products.name as product_name', 'offices.title as office_name', 'offices.head_office_id as head_office_id',  'offices.zonal_office_id as zonal_office_id')
+            ->select('product_allocates.*', 'products.name as product_name', 'products.product_code as product_code', 'offices.title as office_name', 'offices.head_office_id as head_office_id',  'offices.zonal_office_id as zonal_office_id')
             ->orderBy('id', 'desc')
             ->get();
 

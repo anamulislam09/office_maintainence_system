@@ -39,6 +39,7 @@ use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\ProductAllocateController;
 use App\Http\Controllers\ProductStatusController;
 use App\Http\Controllers\ReceiveRequestController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransferRequestController;
 use Illuminate\Support\Facades\Artisan;
@@ -127,6 +128,15 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::post('/product-status/store', [ProductStatusController::class, 'store'])->name('product-status.store');
         Route::get('/product-status/{office_id}/{product_id}', [ProductStatusController::class, 'filterProductStatus']);
         Route::get('/product-list/{office_id}', [ProductStatusController::class, 'filterProductList']);
+
+        //    Reportsa route start here ---->
+        Route::get('/report/status/all-report', [ReportController::class, 'index'])->name('product-status.report');
+        Route::get('/report/status/all-report/{office_id}/{product_id}', [ReportController::class, 'filterProductStatus']);
+        Route::get('/report/product-list/{office_id}', [ReportController::class, 'filterProductList']);
+        // product moreport/nitor route start here 
+        Route::get('/report/product-monitors/all', [ReportController::class, 'getProducts'])->name('product.monitors.all');
+        Route::get('/report/product-monitors/all/{product_id}', [ReportController::class, 'monitor']);
+        //    Reportsa route ends here ---->
 
         //    Trtansfer Request route start here ---->
         Route::get('/transfer-request/all', [TransferRequestController::class, 'index'])->name('transfer-request.index');

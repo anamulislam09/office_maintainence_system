@@ -41,6 +41,7 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Product Name</th>
+                                                    <th>Product Code</th>
                                                     <th>Office Name</th>
                                                     <th>Assign Date</th>
                                                     {{-- <th>Status</th> --}}
@@ -53,6 +54,7 @@
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>{{ $assignment->product_name }}</td>
+                                                        <td>{{ $assignment->product_code }}</td>
                                                         <td>{{ $assignment->office_name }}</td>
                                                         <td>{{ $assignment->assign_date }}</td>
                                                         {{-- <td>

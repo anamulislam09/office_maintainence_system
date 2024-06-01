@@ -430,9 +430,9 @@
         {{-- Receive menu ends here --}}
         {{-- Reports menu start here --}}
         @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                (Auth::guard('admin')->user()->office_id == '1' || in_array('Transfer Request', $privileges)))
-          <li class="nav-item {{ request()->is('admin/transfer-request/*') ? 'menu-open' : '' }}">
-            <a href="#" class="nav-link {{ request()->is('admin/transfer-request/*') ? 'active' : '' }}">
+                (Auth::guard('admin')->user()->office_id == '1' ))
+          <li class="nav-item {{ request()->is('admin/report/status/all-report') || request()->is('admin/product-monitors/all') ? 'menu-open' : '' }}">
+            <a href="#" class="nav-link {{ request()->is('admin/report/status/all-report') ? 'active' : '' }}">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Reports
@@ -441,12 +441,24 @@
             </a>
             <ul class="nav nav-treeview">
               @if (Auth::guard('admin')->user()->type == 'superadmin' ||
+                      (Auth::guard('admin')->user()->office_id == '1'))
+                <li class="nav-item">
+                  <a href="{{ url('admin/report/status/all-report') }}"
+                    class="nav-link {{ request()->is('admin/report/status/all-report') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Status Reports</p>
+                  </a>
+                </li>
+              @endif
+            </ul>
+            <ul class="nav nav-treeview">
+              @if (Auth::guard('admin')->user()->type == 'superadmin' ||
                       (Auth::guard('admin')->user()->office_id == '1' || in_array('Transfer Request, Add', $privileges)))
                 <li class="nav-item">
-                  <a href="{{ url('admin/transfer-request/create') }}"
-                    class="nav-link {{ request()->is('admin/transfer-request/create') ? 'active' : '' }}">
+                  <a href="{{route('product.monitors.all')}}"
+                    class="nav-link {{ request()->is('admin/report/product-monitors/all') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>All Reports</p>
+                    <p>Product Monitoring</p>
                   </a>
                 </li>
               @endif
