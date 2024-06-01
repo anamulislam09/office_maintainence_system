@@ -74,7 +74,7 @@
                             <td>{{ $product->product_code }}</td>
                             <td>{{ $product->purchase_price }}</td>
                             <td>{{ $product->purchase_date }}</td>
-                            <td>{{ $product->garranty }}</td>
+                            <td>{{ $product->garranty }} months</td>
                             <td>{{ $product->garranty_end_date }}</td>
                             @if (Auth::guard('admin')->user()->office_id == 0 || Auth::guard('admin')->user()->office_id == 1)
                               <td>

@@ -45,25 +45,38 @@ class ProductStatusController extends Controller
                 ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
                 ->orderBy('product_statuses.created_date', 'desc')
                 ->get();
-            $products = Product::where('isassign', 1)->get();
+            // $products = Product::where('isassign', 1)->get();
 
-            $data['product'] = '<option value="" selected disabled>Select One</option>';
-            $data['product'] .= '<option value="0" >All Products</option>';
-            foreach ($products as $product) {
-                $data['product'] .= '<option value="' . $product->id . '" product-title="' . $product->name . '"
-                          product-code="' . $product->product_code . '">
-                          ' . $product->name . ' (' . $product->product_code . ')</option>';
-            }
+            // $data['product'] = '<option value="" selected disabled>Select One</option>';
+            // $data['product'] .= '<option value="0" >All Products</option>';
+            // foreach ($products as $product) {
+            //     $data['product'] .= '<option value="' . $product->id . '" product-title="' . $product->name . '"
+            //               product-code="' . $product->product_code . '">
+            //               ' . $product->name . ' (' . $product->product_code . ')</option>';
+            // }
         } else {
-            
-            $data['productStatus'] = DB::table('product_statuses')
-                ->join('products', 'products.id', '=', 'product_statuses.product_id')
-                ->join('categories', 'products.cat_id', '=', 'categories.id')
-                ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
-                ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
-                ->where('product_statuses.office_id', $office_id)
-                ->orderBy('product_statuses.created_date', 'desc')
-                ->get();
+            // if ($office_id == Auth::guard('admin')->user()->office_id && $product_id == 0) {
+                $data['productStatus'] = DB::table('product_statuses')
+                    ->join('products', 'products.id', '=', 'product_statuses.product_id')
+                    ->join('categories', 'products.cat_id', '=', 'categories.id')
+                    ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
+                    ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
+                    ->where('product_statuses.office_id', $office_id)
+                    // ->where('product_statuses.product_id', $product_id)
+                    ->orderBy('product_statuses.created_date', 'desc')
+                    ->get();
+            // } else {
+
+            //     $data['productStatus'] = DB::table('product_statuses')
+            //         ->join('products', 'products.id', '=', 'product_statuses.product_id')
+            //         ->join('categories', 'products.cat_id', '=', 'categories.id')
+            //         ->join('offices', 'product_statuses.office_id', '=', 'offices.id')
+            //         ->select('products.name as product_name', 'offices.title as office_name', 'products.*', 'product_statuses.*', 'categories.name as category_name')
+            //         ->where('product_statuses.office_id', $office_id)
+            //         ->where('product_statuses.product_id', $product_id)
+            //         ->orderBy('product_statuses.created_date', 'desc')
+            //         ->get();
+            // }
 
             // $data['productStatus'] = DB::table('product_statuses')
             //     ->join('products', 'products.id', '=', 'product_statuses.product_id')
@@ -83,7 +96,7 @@ class ProductStatusController extends Controller
             //     ->orderBy('product_statuses.created_date', 'desc')
             //     ->get();
 
-           
+
         }
         return response()->json($data, 200);
     }
@@ -95,9 +108,9 @@ class ProductStatusController extends Controller
     }
     public function filterProductList($office_id)
     {
-        $productList = Product::query()->join('product_allocates', 'product_allocates.product_id','=','products.id');
-        if($office_id) $productList = $productList->where('product_allocates.office_id', $office_id);
-        $productList = $productList->select('products.name','products.id','products.product_code')->get();
+        $productList = Product::query()->join('product_allocates', 'product_allocates.product_id', '=', 'products.id');
+        if ($office_id) $productList = $productList->where('product_allocates.office_id', $office_id);
+        $productList = $productList->select('products.name', 'products.id', 'products.product_code')->get();
         return response()->json($productList, 200);
     }
 

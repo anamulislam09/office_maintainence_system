@@ -43,10 +43,8 @@ class ReceiveRequestController extends Controller
             ->where('status', 2)
             ->first();
         $office = Office::where('id', $transferRequests->request_to_office_id)->first();
-
         return view('admin.received_request.others_office', compact('transferRequests', 'office'));
     }
-
 
     public function ToshowProduct($id)
     {

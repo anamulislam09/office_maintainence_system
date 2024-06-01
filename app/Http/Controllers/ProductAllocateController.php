@@ -43,7 +43,7 @@ class ProductAllocateController extends Controller
             $product->save();
         }
 
-        return redirect()->route('product-allocate.index')->with('alert', ['messageType' => 'success', 'message' => 'Product Assign Successfully!']);
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Product Assign Successfully!']);
     }
 
     // unique id serial function

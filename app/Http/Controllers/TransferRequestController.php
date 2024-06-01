@@ -36,10 +36,8 @@ class TransferRequestController extends Controller
                     'to_office.title AS to_office_name'
                 )
                 ->get();
-                // dd($transferRequests);
             return view('admin.transfer_request.index', compact('transferRequests'));
         } else {
-            // $data = TransferRequest::where('request_from_office_id', Auth::guard('admin')->user()->office_id)->orderBy('id', 'desc')->get();
             $transferRequests = DB::table('transfer_requests')
                 ->join('transfer_request_details', 'transfer_requests.id', '=', 'transfer_request_details.transfer_request_id')
                 ->join('products', 'transfer_request_details.product_id', '=', 'products.id')
@@ -58,7 +56,6 @@ class TransferRequestController extends Controller
                     'to_office.title AS to_office_name'
                 )
                 ->get();
-
             return view('admin.transfer_request.index', compact('transferRequests'));
         }
     }
@@ -70,8 +67,6 @@ class TransferRequestController extends Controller
             ->where('request_from_office_id', Auth::guard('admin')->user()->office_id)
             ->where('status', 1)
             ->first();
-
-        // $office_name = Office::where('id', $transferRequests->request_to_office_id)->value('title');
         return view('admin.transfer_request.issue', compact('transferRequests'));
     }
 
@@ -87,38 +82,8 @@ class TransferRequestController extends Controller
     // product transfer issu approved method 
     public function issued($id)
     {
-        // $admin = Admin::with('role')->find(Auth::guard('admin')->user()->id);
-        // $data = TransferRequest::find($id);
-
-        // $data->status = 2;
-        // $data->updated_by = $admin->role->role;
-        // $data->updated_date = now();
-        // $data->save();
-
-        // $transferProducts = TransferRequestDetails::where('transfer_request_id', $id)->get();
-
-        // foreach ($transferProducts as $product) {
-        //     $product_allocate = ProductAllocate::where('office_id', $data->request_from_office_id)
-        //         ->where('product_id', $product->product_id)
-        //         ->first();
-        //     if ($product_allocate) {
-        //         $product_allocate->location = 2;
-        //         $product_allocate->updated_date = date('Y-m-d h:m:s');
-        //         $product_allocate->save();
-        //     }
-
-        //     $data['product_id'] = $product->product_id;
-        //     $data['office_id'] = $data->request_to_office_id;
-        //     $data['product_id'] = $product->product_id;
-        //     $data['assign_date'] = date('Y-m-d h:m:s');
-        //     $data['location'] = 2;
-        //     ProductAllocate::create($data);
-        // }
-
-
         $admin = Admin::with('role')->find(Auth::guard('admin')->user()->id);
         $transferRequest = TransferRequest::find($id);
-    
         $transferRequest->status = 2;
         $transferRequest->updated_by = $admin->role->role;
         $transferRequest->updated_date = now();
@@ -141,7 +106,7 @@ class TransferRequestController extends Controller
             $newProductAllocate->product_id = $product->product_id;
             $newProductAllocate->office_id = $transferRequest->request_to_office_id;
             $newProductAllocate->assign_date = now(); // Use Laravel's now() helper for current datetime
-            $newProductAllocate->location = 2;
+            $newProductAllocate->location = 5;
             $newProductAllocate->save();
         }
     

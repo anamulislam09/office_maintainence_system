@@ -41,18 +41,8 @@
                                 </div>
                                 <div class="bootstrap-data-table-panel">
                                     <div class="table-responsive">
-                                        <table id="example1" class="table table-striped table-bordered table-centre">
-                                            <thead>
-                                                <tr>
-                                                    <th>transferred from</th>
-                                                    <th>transferred Date</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="table_body">
-                                               
-                                            </tbody>
+                                        <table id="example1" class="table table-striped table-bordered table-centre item_table">
+                                            
                                         </table>
                                     </div>
                                 </div>
@@ -79,21 +69,19 @@
         </div>
     </div>
 @endsection
-
-
 @section('script')
     <script>
          $('body').on('click', '#officeId', function() {
             // let user_id = $(this).data('id');
             var officeId = this.getAttribute('data-office-id');
             $.get("/admin/transfer-request/get-data/" + officeId, function(data) {
-                $('#table_body').html(data);
+                $('.item_table').html(data);
             })
         })
 
          $('body').on('click', '#getBtn', function() {
-            $.get("/admin/transfer-request/get-data/" , function(data) {
-                $('#table_body').html(data);
+            $.get("/admin/transfer-request/get-data" , function(data) {
+                $('.item_table').html(data);
             })
         })
 

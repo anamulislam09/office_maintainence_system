@@ -1,4 +1,14 @@
-
+<thead>
+    <tr>
+        <th>Sl</th>
+        <th>Product Name</th>
+        <th>Product Code</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+</thead>
+<tbody>
+   
 @foreach ($assignments as $key => $assignment)
 <tr>
     <td>{{ $key + 1 }}</td>
@@ -31,4 +41,5 @@
 </td>
 </tr>
 @endforeach
+</tbody>
 

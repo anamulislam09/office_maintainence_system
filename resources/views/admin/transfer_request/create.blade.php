@@ -128,95 +128,6 @@
         </div>
       </div>
     </section>
-
-
-    {{-- <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Create Form</h3>
-                            </div>
-                            <form action="{{ route('transfer-request.store') }}" method="POST"
-                                enctype="multipart/form-data">
-                                @csrf()
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
-                                            <label>Transfer To </label>
-                                            <select name="office_id" id="" class="form-control">
-                                                <option value="" selected disabled>Select Once</option>
-                                                @foreach ($offices as $office)
-                                                    <option value="{{ $office->id }}">{{ $office->title }}</option>
-                                                    @php
-                                                        $zonal_offices = App\Models\Office::where(
-                                                            'head_office_id',
-                                                            $office->id,
-                                                        )
-                                                            ->where('zonal_office_id', '')
-                                                            ->get();
-                                                    @endphp
-                                                    @foreach ($zonal_offices as $zonal_office)
-                                                        <option value="{{ $zonal_office->id }}">
-                                                            &nbsp;&rightarrow;{{ $zonal_office->title }}</option>
-                                                        @php
-                                                            $branch_offices = App\Models\Office::where(
-                                                                'zonal_office_id',
-                                                                $zonal_office->id,
-                                                            )->get();
-                                                        @endphp
-                                                        @foreach ($branch_offices as $branch_office)
-                                                            <option value="{{ $branch_office->id }}">
-                                                                &nbsp;&rightarrow;&rightarrow; {{ $branch_office->title }}
-                                                            </option>
-                                                        @endforeach
-                                                    @endforeach
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
-                                            <label>Choose Products</label>
-                                            <select name="product_id" id="" class="form-control">
-                                                <option value="" selected disabled>Select Once</option>
-
-                                                @if (Auth::guard('admin')->user()->office_id == '0' || Auth::guard('admin')->user()->office_id == '1')
-                                                    @foreach ($products as $product)
-                                                        <option value="{{ $product->id }}">{{ $product->name }}
-                                                        </option>
-                                                    @endforeach
-                                                @else
-                                                    @foreach ($products as $product)
-                                                        @php
-                                                            $item = App\Models\Product::where(
-                                                                'id',
-                                                                $product->product_id,
-                                                            )->first();
-                                                        @endphp
-                                                        <option value="{{ $item->id }}">{{ $item->name }}
-                                                        </option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-12">
-                                            <label>Write Note *</label>
-                                            <textarea id="note" class="form-control" rows="5" name="note"
-                                                placeholder="Enter some notes about why you want to transfer this product."></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> --}}
   </div>
 @endsection
 @section('script')
@@ -232,8 +143,6 @@
         td += '<td class="serial"></td>';
         td += '<td><input type="hidden" value="' + product_id + '" name="product_id[]">' +
           product_title + '</td>';
-        // td += '<td><input type="hidden" value="' + product_title +
-        //     '" name="product_title[]" required>' + product_title + '</td>';
         td += '<td><input type="hidden" value="' + product_code +
           '" name="product_code[]"  required>' + product_code + '</td>';
         td +=
@@ -276,7 +185,7 @@
         type: 'post',
         data: 'transfer_from_office_id=' + transfer_from_office_id + '&_token={{ csrf_token() }}',
         success: function(result) {
-            console.log(result);
+            // console.log(result);
           $('#product_id_temp').html(result);
         }
       })

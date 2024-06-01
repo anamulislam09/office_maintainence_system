@@ -39,11 +39,10 @@
                                 <div class="card-header">
                                     <div class="row">
                                         @if (!$branch_office_exists)
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-3 col-md-3 col-sm-6">
                                                 <select name="office_id" id="office_id" class="form-control form-control-sm">
-    
-                                                    <option value="0"> All office</option>
                                                     @if (Auth::guard('admin')->user()->office_id == 1 || Auth::guard('admin')->user()->office_id == 1)
+                                                    <option value="0"> All office</option>
                                                         @foreach ($offices as $office)
                                                             <option value="{{ $office->id }}">{{ $office->title }}
                                                             </option>
@@ -69,16 +68,13 @@
                                             </div>
                                         @else
                                         @endif
-
-
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-3 col-md-3 col-sm-6">
                                             <select name="product_id" id="product_id"
                                                 class="form-control form-control-sm select2">
-                                                <option value="" selected disabled>Select Product</option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-3">
-                                            <button class="btn btn-primary" id="filter">Filter</button>
+                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                            <button class="btn btn-primary btn-sm" id="filter">Filter</button>
                                         </div>
                                     </div>
                                 </div>
@@ -98,7 +94,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="tbody2">
-                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -107,13 +102,10 @@
                         </div>
                     </section>
                 </div>
-
             </div>
         </section>
     </div>
 @endsection
-
-
 @section('script')
     <script>
         $('.select2').select2();
@@ -125,10 +117,11 @@
             $('#filter').on('click', function() {
                 var office_id = $('#office_id').val();
                 var product_id = $('#product_id').val(); 
+                // alert(office_id);
+                // alert(product_id);
                 productStatus(office_id, product_id);
             });
         });
-
         function onLoad(){
             var office_id = "{{ Auth('admin')->user()->office_id }}";
             var product_id = 0; 
@@ -137,7 +130,6 @@
             var product_id = $('#product_id').val(); 
             productStatus(office_id, product_id);
         }
-
         function loadProduct(office_id) {
             $.ajax({
                 type: "GET",
@@ -152,7 +144,6 @@
                 }
             })
         }
-
         function productStatus(office_id, product_id) {
             $.ajax({
                 type: "GET",
@@ -172,7 +163,6 @@
                             tbody += '<td>' + element.created_date + '</td>';
                             tbody += '<td>' + element.created_by + '</td>';
                             tbody += '<td>';
-
                             if (element.status == 0) {
                                 tbody += '<span class="badge badge-warning">Not Working</span>';
                             } else if (element.status == 1) {
@@ -180,11 +170,9 @@
                             } else {
                                 tbody += '<span class="badge badge-danger">Dead</span>';
                             }
-
                             tbody += '</td>';
                             tbody += '</tr>';
                         });
-
                         $('#tbody2').html(tbody);
                         // $("#tbody2").show();
                         // $("#tbody2").reset();
@@ -197,6 +185,5 @@
                 }
             });
         }
-
     </script>
 @endsection
