@@ -404,7 +404,7 @@
                                         class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
-                    @endif
+                    @endif  
                     @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('New Customers', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-warning">
