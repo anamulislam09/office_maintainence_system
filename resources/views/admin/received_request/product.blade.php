@@ -1,3 +1,8 @@
+<style>
+  table, tbody, tr,td{
+      font-size: 14px;
+  }
+</style>
 <div class="table-responsive">
 
     <table id="example1" class="table table-striped table-bordered table-centre">

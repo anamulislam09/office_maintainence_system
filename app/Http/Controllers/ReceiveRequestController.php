@@ -26,15 +26,22 @@ class ReceiveRequestController extends Controller
         }
     }
 
+
     public function getOfficeData($id)
     {
-        $assignments = ProductAllocate::where('office_id', Auth::guard('admin')->user()->office_id)
-            ->where('location', 2)->whereNull('updated_date')
+        $office_id = Auth::guard('admin')->user()->office_id;
+        $assignments = ProductAllocate::where('office_id', $office_id)
+            ->where('location', 2)
+            ->whereNull('updated_date')
             ->get();
+    
+        // Fetch product details manually
         $productIds = $assignments->pluck('product_id')->toArray();
-        $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get();
+        $products = Product::whereIn('id', $productIds)->orderBy('id', 'desc')->get()->keyBy('id');
+    
         return view('admin.received_request.head_office', compact('assignments', 'products'));
     }
+    
 
     public function getData()
     {

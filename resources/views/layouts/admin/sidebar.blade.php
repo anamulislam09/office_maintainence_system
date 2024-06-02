@@ -34,7 +34,7 @@
         @endif
         {{-- Dashboard menu ends here --}}
         {{-- Basic Info menu start here --}}
-        @if (Auth::guard('admin')->user()->type == 'superadmin' ||
+        {{-- @if (Auth::guard('admin')->user()->type == 'superadmin' ||
                 (Auth::guard('admin')->user()->office_id == '1' && in_array('Basic Info Manage', $privileges)))
           <li class="nav-item {{ request()->is('admin/basic-infos*') ? 'menu-open' : '' }}">
             <a href="{{ url('admin/basic-infos') }}"
@@ -43,7 +43,7 @@
               <p>Basic Info Manage</p>
             </a>
           </li>
-        @endif
+        @endif --}}
         {{-- Basic Info menu ends here --}}
         {{-- Admin Manage menu start here --}}
         @if (Auth::guard('admin')->user()->type == 'superadmin' ||
@@ -394,8 +394,7 @@
         @endif
         {{-- Transfer menu ends here --}}
         {{-- Receive menu start here --}}
-        @if (Auth::guard('admin')->user()->type == 'superadmin' ||
-                (Auth::guard('admin')->user()->office_id == '1' || in_array('Receive', $privileges)))
+        @if (in_array('Receive', $privileges))
           <li class="nav-item {{ request()->is('admin/receive-request/*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('admin/receive-request/*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-edit"></i>
@@ -431,7 +430,7 @@
         {{-- Reports menu start here --}}
         @if (Auth::guard('admin')->user()->type == 'superadmin' ||
                 (Auth::guard('admin')->user()->office_id == '1' ))
-          <li class="nav-item {{ request()->is('admin/report/status/all-report') || request()->is('admin/product-monitors/all') ? 'menu-open' : '' }}">
+          <li class="nav-item {{ request()->is('admin/report/status/all-report') || request()->is('admin/report/product-monitors/all') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('admin/report/status/all-report') ? 'active' : '' }}">
               <i class="nav-icon fas fa-edit"></i>
               <p>

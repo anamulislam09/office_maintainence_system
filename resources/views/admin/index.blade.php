@@ -93,8 +93,14 @@
                             </div>
                         </div>
                     @endif
+                    @php
+                        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)
+                            ->where('head_office_id', '!=', '')
+                            ->where('zonal_office_id', '!=', '')
+                            ->exists();
+                    @endphp
                     @if (Auth::guard('admin')->user()->type != 'superadmin' && Auth::guard('admin')->user()->type != '2')
-                        <div class="col-lg-3 col-6">
+                        <div class="col-lg-3 col-6" @if ($branch_office_exists) hidden @endif>
                             <div class="small-box bg-success">
                                 <div class="inner">
                                     @php
@@ -112,6 +118,7 @@
                                         class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
+                    @else
                     @endif
                     @if (Auth::guard('admin')->user()->type == 'superadmin' || Auth::guard('admin')->user()->type == '2')
                         <div class="col-lg-3 col-6">
@@ -404,7 +411,7 @@
                                         class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
-                    @endif  
+                    @endif
                     @if (Auth::guard('admin')->user()->type == 'superadmin' || in_array('New Customers', $privileges))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-warning">

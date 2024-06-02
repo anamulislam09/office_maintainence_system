@@ -28,7 +28,7 @@ class ProductStatusController extends Controller
 
     public function filterProductStatus($office_id, $product_id)
     {
-            $data['productStatus'] = DB::table('product_statuses as ps')
+        $data['productStatus'] = DB::table('product_statuses as ps')
             ->join('products as p', 'p.id', '=', 'ps.product_id')
             ->join('categories as c', 'p.cat_id', '=', 'c.id')
             ->join('offices as o', 'ps.office_id', '=', 'o.id')
@@ -46,19 +46,20 @@ class ProductStatusController extends Controller
                     ->from('product_statuses as ps2')
                     ->groupBy('ps2.product_id');
             });
-        
+
+
         if ($office_id) {
             $data['productStatus'] = $data['productStatus']->where('ps.office_id', $office_id);
         }
-        
+
         if ($product_id) {
             $data['productStatus'] = $data['productStatus']->where('ps.product_id', $product_id);
         }
-        
+
         $data['productStatus'] = $data['productStatus']
             ->orderBy('ps.created_date', 'desc')
             ->get();
-        
+
 
         return response()->json($data, 200);
     }
@@ -67,6 +68,7 @@ class ProductStatusController extends Controller
     {
         $productList = Product::query()->join('product_allocates', 'product_allocates.product_id', '=', 'products.id');
         if ($office_id) $productList = $productList->where('product_allocates.office_id', $office_id);
+        $productList = $productList->where('product_allocates.location', '1');
         $productList = $productList->select('products.name', 'products.id', 'products.product_code')->get();
         return response()->json($productList, 200);
     }
@@ -96,7 +98,6 @@ class ProductStatusController extends Controller
                 ->select('product_allocates.*', 'products.*', 'categories.name as cat_name')
                 ->get();
         }
-
         return response()->json($products, 200);
     }
 
@@ -144,6 +145,4 @@ class ProductStatusController extends Controller
         }
         return $zeros . $srl;
     }
-
-
 }

@@ -1,5 +1,8 @@
 @extends('layouts.admin.master')
 @section('content')
+    @php
+        $basicInfo = App\Models\BasicInfo::first();
+    @endphp
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -53,7 +56,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        
+
                                         <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
                                             <label>Supplier</label>
                                             <select name="supplier_id" id="" class="form-control">
@@ -71,11 +74,13 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                       
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
+
+                                        <div class="form-group col-sm-12 col-md-6 col-lg-6 mb-0">
                                             <label>Product Code</label>
-                                            <input class="form-control" type="text" name="product_code"
-                                                id="product_code" placeholder=" Enter Product Code">
+                                            <input class="form-control" type="text" name="product_code" id="product_code"
+                                                placeholder=" Enter Product Code">
+                                            <span class="text-warning" style="font-size: 12px;">Product code must be unique
+                                                according to the product</span>
                                         </div>
                                         <div class="form-group col-sm-12 col-md-6 col-lg-6 ">
                                             <label>Purchase Price</label>

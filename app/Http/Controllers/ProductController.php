@@ -41,36 +41,43 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $date = $request->purchase_date;
-        $garrenty = $request->garranty;
-        $garranty_end_date = date('Y-m-d', strtotime("+$garrenty months", strtotime($date)));
+        $codeExist = Product::where('product_code', $request->product_code)->exists();
 
-        $code = 1;
-        $isExist = Product::exists();
-        if ($isExist) {
-            $sr_no = Product::max('serial_no');
-            $serial_no = explode('-', $sr_no)[1];
-            $data['serial_no'] = 'Sr-' . $this->formatSrl(++$serial_no);
-        } else {
-            $data['serial_no'] = 'Sr-' . $this->formatSrl($code);
+        if(!$codeExist){
+            $date = $request->purchase_date;
+            $garrenty = $request->garranty;
+            $garranty_end_date = date('Y-m-d', strtotime("+$garrenty months", strtotime($date)));
+    
+            $code = 1;
+            $isExist = Product::exists();
+            if ($isExist) {
+                $sr_no = Product::max('serial_no');
+                $serial_no = explode('-', $sr_no)[1];
+                $data['serial_no'] = 'Sr-' . $this->formatSrl(++$serial_no);
+            } else {
+                $data['serial_no'] = 'Sr-' . $this->formatSrl($code);
+            }
+    
+            $cat = Category::where('id', $request->cat_id)->first();
+    
+            $data['cat_id'] = $cat->main_cat_id ? $cat->main_cat_id : $request->cat_id;
+            $data['sub_cat_id'] = $cat->main_cat_id ? $request->cat_id : null;
+            $data['name'] = $request->name;
+            $data['brand_id'] = $request->brand_id;
+            $data['supplier_id'] = $request->supplier_id;
+            $data['product_code'] = $request->product_code;
+            $data['purchase_date'] = $date;
+            $data['purchase_price'] = $request->purchase_price;
+            $data['garranty'] = $garrenty;
+            $data['garranty_end_date'] = $request->garranty ? $garranty_end_date : '';
+            $data['descriptions'] = $request->descriptions;
+    
+            Product::create($data);
+            return redirect()->route('product.index')->with('alert', ['messageType' => 'success', 'message' => 'Product Added Successfully!']);
+        }else{
+            return redirect()->back()->with('alert', ['messageType' => 'danger', 'message' => 'Product code must be unique according to the product!']);
         }
-
-        $cat = Category::where('id', $request->cat_id)->first();
-
-        $data['cat_id'] = $cat->main_cat_id ? $cat->main_cat_id : $request->cat_id;
-        $data['sub_cat_id'] = $cat->main_cat_id ? $request->cat_id : null;
-        $data['name'] = $request->name;
-        $data['brand_id'] = $request->brand_id;
-        $data['supplier_id'] = $request->supplier_id;
-        $data['product_code'] = $request->product_code;
-        $data['purchase_date'] = $date;
-        $data['purchase_price'] = $request->purchase_price;
-        $data['garranty'] = $garrenty;
-        $data['garranty_end_date'] = $request->garranty ? $garranty_end_date : '';
-        $data['descriptions'] = $request->descriptions;
-
-        Product::create($data);
-        return redirect()->route('product.index')->with('alert', ['messageType' => 'success', 'message' => 'Product Added Successfully!']);
+       
     }
 
     // unique id serial function

@@ -1,5 +1,10 @@
 @extends('layouts.admin.master')
 @section('content')
+<style>
+    table, tbody, tr,td{
+        font-size: 14px;
+    }
+</style>
 <div class="content-wrapper">
     <div class="content-header">
         @include('layouts.admin.flash-message')
@@ -37,6 +42,7 @@
                                             <tr>
                                                 <th>SN</th>
                                                 <th>Name</th>
+                                                <th>Office</th>
                                                 <th>Role</th>
                                                 <th>Phone</th>
                                                 <th>Email</th>
@@ -47,9 +53,13 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($admins as $admin)
+                                            @php
+                                                $office_name = App\Models\Office::where('id', $admin->office_id)->value('title');
+                                            @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $admin->name }}</td>
+                                                    <td>{{ $office_name}}</td>
                                                     <td>{{ $admin->role->role }}</td>
                                                     <td>{{ $admin->mobile }}</td>
                                                     <td>{{ $admin->email }}</td>
@@ -79,6 +89,7 @@
                                             <tr>
                                                 <th>SN</th>
                                                 <th>Name</th>
+                                                <th>Office</th>
                                                 <th>Role</th>
                                                 <th>Phone</th>
                                                 <th>Email</th>

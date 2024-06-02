@@ -1,7 +1,17 @@
 @extends('layouts.admin.master')
 @section('content')
+<style>
+    table, tbody, tr,td{
+        font-size: 14px;
+    }
+</style>
     @php
         $basicInfo = App\Models\BasicInfo::first();
+        $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)
+            ->where('head_office_id', '!=', '')
+            ->where('zonal_office_id', '!=', '')
+            ->exists();
+        // dd($branch_office_exists);
     @endphp
     <div class="content-wrapper">
         <div class="content-header">
@@ -28,20 +38,40 @@
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
                                     <a href="#"class="btn btn-light shadow rounded m-0">
-                                        <span>All Status </span></i></a>
+                                        <span>All Reportse</span></i></a>
                                 </h3>
                             </div>
                             <div class="card-body">
                                 <div class="card-header">
                                     <div class="row">
-                                        <div class="col-lg-3 col-md-3 col-sm-6">
+                                        <div class="col-lg-3 col-md-3 col-sm-6"
+                                            @if ($branch_office_exists) hidden @endif>
                                             <select name="office_id" id="office_id" class="form-control form-control-sm">
-                                                <option value="0"> All office</option>
-                                                @foreach ($offices as $office)
-                                                    <option value="{{ $office->id }}">{{ $office->title }}
+                                                @if (Auth::guard('admin')->user()->office_id == 0 || Auth::guard('admin')->user()->office_id == 1)
+                                                    <option value="0">All office</option>
+                                                    @foreach ($offices as $office)
+                                                        <option value="{{ $office->id }}" @selected($office->id == Auth::guard('admin')->user()->office_id)>
+                                                            {{ $office->title }}</option>
+                                                    @endforeach
+                                                @else
+                                                    <option value="{{ $offices->id }}" @selected($offices->id == Auth::guard('admin')->user()->office_id)>
+                                                        {{ $offices->title }}
                                                     </option>
-                                                @endforeach
+                                                    @php
+                                                        $branch_offices = App\Models\Office::where(
+                                                            'zonal_office_id',
+                                                            $offices->id,
+                                                        )->get();
+                                                    @endphp
+                                                    @foreach ($branch_offices as $branch_office)
+                                                        <option value="{{ $branch_office->id }}"
+                                                            @if ($branch_office->id == Auth::guard('admin')->user()->office_id) selected @endif>
+                                                            {{ $branch_office->title }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             </select>
+
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-sm-6">
                                             <select name="product_id" id="product_id"
@@ -49,7 +79,7 @@
                                             </select>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-sm-12">
-                                            <button class="btn btn-primary btn-sm" id="filter">Filter</button>
+                                            <button class="btn btn-primary btn-sm" id="filter">Show</button>
                                         </div>
                                     </div>
                                 </div>
@@ -69,7 +99,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="item-table">
-                                               
                                             </tbody>
                                         </table>
                                     </div>
@@ -84,24 +113,24 @@
 @endsection
 @section('script')
     <script>
-        $('.select2').select2();
-        $(function() {
+        $(document).ready(function() {
+            $('.select2').select2();
+            var table = $('#example1').DataTable(); // Initialize DataTable on page load
             onLoad();
+
             $('#office_id').on('change', function() {
                 loadProduct($(this).val());
             });
+
             $('#filter').on('click', function() {
                 var office_id = $('#office_id').val();
                 var product_id = $('#product_id').val();
-                // alert(office_id);
-                // alert(product_id);
                 productStatus(office_id, product_id);
             });
         });
 
         function onLoad() {
-            var office_id = 0;
-            var product_id = 0;
+            var office_id = "{{ Auth('admin')->user()->office_id }}";
             $('#office_id').val(office_id);
             loadProduct(office_id);
             var product_id = $('#product_id').val();
@@ -111,7 +140,7 @@
         function loadProduct(office_id) {
             $.ajax({
                 type: "GET",
-                url: "{{ url('admin/product-list') }}/" + office_id,
+                url: "{{ url('admin/report/product-list') }}/" + office_id,
                 dataType: "json",
                 success: function(res) {
                     let option = `<option value="0" selected> All Products</option>`;
@@ -121,16 +150,15 @@
                     });
                     $('#product_id').html(option);
                 }
-            })
+            });
         }
 
         function productStatus(office_id, product_id) {
             $.ajax({
                 type: "GET",
-                url: "{{ url('admin/status/all-report') }}/" + office_id + '/' + product_id,
+                url: "{{ url('admin/report/status/all-report') }}/" + office_id + '/' + product_id,
                 dataType: "json",
                 success: function(res) {
-                    $('#product_id').html(res.product);
                     if (res.productStatus && res.productStatus.length > 0) {
                         var tbody = '';
                         res.productStatus.forEach((element, index) => {
@@ -153,11 +181,15 @@
                             tbody += '</td>';
                             tbody += '</tr>';
                         });
-                        $('#item-table').html(tbody);
+                        $('#example1 tbody').html(tbody);
                     } else {
-                        $('#item-table').html(
+                        $('#example1 tbody').html(
                             '<tr><td colspan="8" class="text-center">No data available</td></tr>');
                     }
+
+                    // Destroy and reinitialize the DataTable
+                    table.clear().destroy();
+                    table = $('#example1').DataTable();
                 }
             });
         }

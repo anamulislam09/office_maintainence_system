@@ -1,5 +1,10 @@
 @extends('layouts.admin.master')
 @section('content')
+<style>
+    table, tbody, tr,td{
+        font-size: 14px;
+    }
+</style>
     @php
         $basicInfo = App\Models\BasicInfo::first();
         $branch_office_exists = App\Models\Office::where('id', Auth::guard('admin')->user()->office_id)
@@ -74,7 +79,7 @@
                                             </select>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-sm-12">
-                                            <button class="btn btn-primary btn-sm" id="filter">Filter</button>
+                                            <button class="btn btn-primary btn-sm" id="filter">Show</button>
                                         </div>
                                     </div>
                                 </div>
@@ -117,8 +122,6 @@
             $('#filter').on('click', function() {
                 var office_id = $('#office_id').val();
                 var product_id = $('#product_id').val();
-                // alert(office_id);
-                // alert(product_id);
                 productStatus(office_id, product_id);
             });
         });
@@ -177,15 +180,10 @@
                             tbody += '</td>';
                             tbody += '</tr>';
                         });
-                        $('#tbody2').html(tbody);
-                        // $("#tbody2").show();
-                        // $("#tbody2").reset();
                     } else {
-                        $('#tbody2').html(
-                            '<tr><td colspan="8" class="text-center">No data available</td></tr>');
-                        // $("#tbody2").show();
-                        // $("#tbody2").hide();
+                           tbody = '<tr><td colspan="8" class="text-center">No data available</td></tr>';
                     }
+                    $('#tbody2').html(tbody);
                 }
             });
         }

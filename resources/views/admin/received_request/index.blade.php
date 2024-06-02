@@ -1,5 +1,10 @@
 @extends('layouts.admin.master')
 @section('content')
+<style>
+    table, tbody, tr,td{
+        font-size: 14px;
+    }
+</style>
     @php
         $basicInfo = App\Models\BasicInfo::first();
     @endphp

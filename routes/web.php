@@ -135,7 +135,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::get('/report/product-list/{office_id}', [ReportController::class, 'filterProductList']);
         // product moreport/nitor route start here 
         Route::get('/report/product-monitors/all', [ReportController::class, 'getProducts'])->name('product.monitors.all');
-        Route::get('/report/product-monitors/all/{product_id}', [ReportController::class, 'monitor']);
+        Route::get('/report/product-monitors/{product_id}', [ReportController::class, 'monitor']);
         //    Reportsa route ends here ---->
 
         //    Trtansfer Request route start here ---->
