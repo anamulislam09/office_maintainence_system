@@ -457,7 +457,7 @@
                   <a href="{{route('product.monitors.all')}}"
                     class="nav-link {{ request()->is('admin/report/product-monitors/all') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Product Monitoring</p>
+                    <p>Product Tracking</p>
                   </a>
                 </li>
               @endif
