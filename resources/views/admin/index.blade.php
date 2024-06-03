@@ -182,18 +182,18 @@
                                 <div class="inner">
                                     @php
                                         if (
-                                            Auth::guard('admin')->user()->office_id !== 0 &&
-                                            Auth::guard('admin')->user()->office_id !== 1
+                                            Auth::guard('admin')->user()->type != 'superadmin' &&
+                                            Auth::guard('admin')->user()->type != '2'
                                         ) {
-                                            $products = App\Models\ProductAllocate::where(
+                                        $products = App\Models\ProductAllocate::where(
                                                 'office_id',
                                                 Auth::guard('admin')->user()->office_id,
                                             )
                                                 ->whereIn('location', [1, 3])
                                                 ->count();
                                         } else {
-                                            $products = App\Models\Product::count();
-                                            // dd($products);
+                                           $products = App\Models\Product::count();
+                                            
                                         }
                                     @endphp
                                     <p>Total Product</p>
@@ -252,8 +252,8 @@
                                 <div class="inner">
                                     @php
                                         if (
-                                            Auth::guard('admin')->user()->office_id !== 0 &&
-                                            Auth::guard('admin')->user()->office_id !== 1
+                                            Auth::guard('admin')->user()->type != 'superadmin' &&
+                                            Auth::guard('admin')->user()->type != '2'
                                         ) {
                                             $subquery = ProductStatus::selectRaw(
                                                 'MAX(id) as id, product_id, MAX(created_date) as last_created',
@@ -308,8 +308,8 @@
                                 <div class="inner">
                                     @php
                                         if (
-                                            Auth::guard('admin')->user()->office_id !== 0 &&
-                                            Auth::guard('admin')->user()->office_id !== 1
+                                            Auth::guard('admin')->user()->type != 'superadmin' &&
+                                            Auth::guard('admin')->user()->type != '2'
                                         ) {
                                             $subquery = ProductStatus::selectRaw(
                                                 'MAX(id) as id, product_id, MAX(created_date) as last_created',
@@ -363,21 +363,27 @@
                                 <div class="inner">
                                     @php
                                         if (
-                                            Auth::guard('admin')->user()->office_id !== 0 &&
-                                            Auth::guard('admin')->user()->office_id !== 1
+                                            Auth::guard('admin')->user()->type != 'superadmin' &&
+                                            Auth::guard('admin')->user()->type != '2'
                                         ) {
                                             $subquery = ProductStatus::selectRaw(
                                                 'MAX(id) as id, product_id, MAX(created_date) as last_created',
                                             )->groupBy('product_id');
+
                                             $dead = ProductStatus::joinSub($subquery, 'product_latest', function (
                                                 $join,
                                             ) {
                                                 $join->on('product_statuses.id', '=', 'product_latest.id');
                                             })
-                                                ->where('status', '=', '-1')
-                                                ->where('office_id', Auth::guard('admin')->user()->office_id)
+                                                ->where('product_statuses.status', '=', '-1')
+                                                ->where(
+                                                    'product_statuses.office_id',
+                                                    Auth::guard('admin')->user()->office_id,
+                                                )
                                                 ->get();
-                                            $product_ids = $NotWorking->pluck('product_id')->toArray();
+
+                                            $product_ids = $dead->pluck('product_id')->toArray();
+
                                             $totalDeadProduct = App\Models\ProductAllocate::where(
                                                 'office_id',
                                                 Auth::guard('admin')->user()->office_id,
@@ -388,7 +394,7 @@
                                         } else {
                                             $subquery = ProductStatus::selectRaw(
                                                 'MAX(id) as id, MAX(created_date) as last_created',
-                                            )->groupBy();
+                                            )->groupBy('product_id');
                                             $totalDeadProduct = ProductStatus::joinSub(
                                                 $subquery,
                                                 'product_latest',

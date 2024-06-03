@@ -81,22 +81,23 @@
           },
           dataType: 'JSON',
           success: function(res) {
-            // console.log(res);
+            console.log(res);
 
             var tbody = '';
             res.forEach((element, index) => {
+
               tbody += '<tr>';
               tbody += '<input type="hidden" name="product_id[]" value="' + element.product_id + '">';
               tbody += '<input type="hidden" name="office_id[]" value="' + element.office_id + '">';
-              tbody += '<td>' + (index + 1) + '</td>';
+              tbody += '<td>' + (index + 1) +'</td>';
               tbody += '<td>' + element.product_code + '</td>';
               tbody += '<td>' + element.name + '</td>';
               tbody += '<td>' + element.cat_name + '</td>';
               tbody += '<td>' +
                 '<select name="status[]" class="form-control">' +
-                '<option value="1" selected>Working</option>' +
-                '<option value="0">Not Working</option>' +
-                '<option value="-1">Dead</option>' +
+                '<option value="1"' + (element.status == 1 ? ' selected' : '') + '>Working</option>' +
+                '<option value="0" ' + (element.status == 0 ? ' selected' : '') + '>Not Working</option>' +
+                '<option value="-1" ' + (element.status == -1 ? ' selected' : '') + '>Dead</option>' +
                 '</select>' + '</td>';
               tbody += '</tr>';
             });
