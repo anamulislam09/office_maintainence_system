@@ -71,37 +71,37 @@ class ProductAllocateController extends Controller
 
     // where('isassign', 0)
 
-    public function edit($id)
-    {
-        $assign = ProductAllocate::where('id', $id)->first();
-        $products = Product::orderBy('id', 'desc')->get();
-        // $offices = Office::where('head_office_id', !null)->where('zonal_office_id', '')->get();
-        $offices = Office::where('head_office_id', '')->get();
-        return view('admin.products.product_allocate.edit', compact('assign', 'products', 'offices'));
-    }
+    // public function edit($id)
+    // {
+    //     $assign = ProductAllocate::where('id', $id)->first();
+    //     $products = Product::orderBy('id', 'desc')->get();
+    //     // $offices = Office::where('head_office_id', !null)->where('zonal_office_id', '')->get();
+    //     $offices = Office::where('head_office_id', '')->get();
+    //     return view('admin.products.product_allocate.edit', compact('assign', 'products', 'offices'));
+    // }
 
-    public function update(Request $request)
-    {
-        $cat = ProductAllocate::where('id', $request->cat_id)->first();
+    // public function update(Request $request)
+    // {
+    //     $cat = ProductAllocate::where('id', $request->cat_id)->first();
 
-        $data = Product::where('id', $request->id)->first();
-        $data['cat_id'] = $cat->main_cat_id ? $cat->main_cat_id : $request->cat_id;
-        $data['sub_cat_id'] = $cat->main_cat_id ? $request->cat_id : null;
-        $data['name'] = $request->name;
-        $data['brand_id'] = $request->brand_id;
-        $data['purchase_date'] = $request->purchase_date;
-        $data['warranty'] = $request->warranty;
-        $data['garranty'] = $request->garranty;
-        $data['descriptions'] = $request->descriptions;
-        $data->save();
+    //     $data = Product::where('id', $request->id)->first();
+    //     $data['cat_id'] = $cat->main_cat_id ? $cat->main_cat_id : $request->cat_id;
+    //     $data['sub_cat_id'] = $cat->main_cat_id ? $request->cat_id : null;
+    //     $data['name'] = $request->name;
+    //     $data['brand_id'] = $request->brand_id;
+    //     $data['purchase_date'] = $request->purchase_date;
+    //     $data['warranty'] = $request->warranty;
+    //     $data['garranty'] = $request->garranty;
+    //     $data['descriptions'] = $request->descriptions;
+    //     $data->save();
 
-        return redirect()->route('product.index')->with('alert', ['messageType' => 'warning', 'message' => 'Product Updated Successfully!']);
-    }
+    //     return redirect()->route('product.index')->with('alert', ['messageType' => 'warning', 'message' => 'Product Updated Successfully!']);
+    // }
 
-    public function destroy($id)
-    {
-        $data = Product::findOrFail($id);
-        $data->delete();
-        return redirect()->route('product.index')->with('alert', ['messageType' => 'danger', 'message' => 'Product Deleted Successfully!']);
-    }
+                        // public function destroy($id)
+                        // {
+                        //     $data = Product::findOrFail($id);
+                        //     $data->delete();
+                        //     return redirect()->route('product.index')->with('alert', ['messageType' => 'danger', 'message' => 'Product Deleted Successfully!']);
+                        // }
 }

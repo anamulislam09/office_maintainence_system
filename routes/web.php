@@ -69,7 +69,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
     Route::middleware('admin')->group(function () {
         Route::post('logout', [AdminController::class, 'logout']);
 
-        //    Brand route 
+        //------------Brand route ------------>
         Route::get('/brand/all', [BrandController::class, 'index'])->name('brand.index');
         Route::get('/brand/create', [BrandController::class, 'create'])->name('brand.create');
         Route::post('/brand/store', [BrandController::class, 'store'])->name('brand.store');
@@ -77,7 +77,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::post('/brand/update', [BrandController::class, 'update'])->name('brand.update');
         Route::delete('/brand/delete/{id}', [BrandController::class, 'destroy'])->name('brand.delete');
 
-        //    Accessories route 
+        //------------Accessories route ------------>
         Route::get('/accessories', [AccessoryController::class, 'index'])->name('accessories.index');
         Route::get('/accessories/create', [AccessoryController::class, 'create'])->name('accessories.create');
         Route::post('/accessories/store', [AccessoryController::class, 'store'])->name('accessories.store');
@@ -85,7 +85,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::post('/accessories/update', [AccessoryController::class, 'update'])->name('accessories.update');
         Route::get('/accessories/delete/{id}', [AccessoryController::class, 'destroy'])->name('accessories.delete');
 
-        //    Category route 
+        //------------Category route ------------>
         Route::get('/category/all', [CategoryController::class, 'index'])->name('category.index');
         Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
         Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
@@ -93,7 +93,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::post('/category/update', [CategoryController::class, 'update'])->name('category.update');
         Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy'])->name('category.delete');
 
-        //    Suppliers route start here 
+        //------------Suppliers route start here ------------>
         Route::get('/supplier/all', [SupplierController::class, 'index'])->name('supplier.index');
         Route::get('/supplier/create', [SupplierController::class, 'create'])->name('supplier.create');
         Route::post('/supplier/store', [SupplierController::class, 'store'])->name('supplier.store');
@@ -101,7 +101,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::post('/supplier/update', [SupplierController::class, 'update'])->name('supplier.update');
         Route::delete('/supplier/delete/{id}', [SupplierController::class, 'destroy'])->name('supplier.delete');
 
-        //    Product route start here ---->
+        //------------Product route start here ---->
         Route::get('/product/all', [ProductController::class, 'index'])->name('product.index');
         Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
         Route::post('/product/store', [ProductController::class, 'store'])->name('product.store');
@@ -109,19 +109,19 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::get('/product/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
         Route::post('/product/update', [ProductController::class, 'update'])->name('product.update');
         Route::delete('/product/delete/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
-        //    Product route ends here ---->
+        //------------Product route ends here ---->
 
-        //    Product Allocate route start here ---->
+        //------------Product Allocate route start here ---->
         Route::get('/product-allocate/all', [ProductAllocateController::class, 'index'])->name('product-allocate.index');
         Route::get('/product-allocate/create', [ProductAllocateController::class, 'create'])->name('product-allocate.create');
         Route::post('/product-allocate/store', [ProductAllocateController::class, 'store'])->name('product-allocate.store');
-        Route::get('/product-allocate/show/{id}', [ProductAllocateController::class, 'show'])->name('product-allocate.show');
-        Route::get('/product-allocate/edit/{id}', [ProductAllocateController::class, 'edit'])->name('product-allocate.edit');
-        Route::post('/product-allocate/update', [ProductAllocateController::class, 'update'])->name('product-allocate.update');
-        Route::delete('/product-allocate/delete/{id}', [ProductAllocateController::class, 'destroy'])->name('product-allocate.destroy');
+        // Route::get('/product-allocate/show/{id}', [ProductAllocateController::class, 'show'])->name('product-allocate.show');
+        // Route::get('/product-allocate/edit/{id}', [ProductAllocateController::class, 'edit'])->name('product-allocate.edit');
+        // Route::post('/product-allocate/update', [ProductAllocateController::class, 'update'])->name('product-allocate.update');
+        // Route::delete('/product-allocate/delete/{id}', [ProductAllocateController::class, 'destroy'])->name('product-allocate.destroy');
 
 
-        //    Product Allocate route start here ---->
+        //------------Product Allocate route start here ---->
         Route::get('/product-status/all', [ProductStatusController::class, 'index'])->name('product-status.index');
         Route::post('/product-status/show', [ProductStatusController::class, 'show'])->name('product-status.show');
         Route::get('/product-status/create', [ProductStatusController::class, 'create'])->name('product-status.create');
@@ -129,25 +129,30 @@ Route::prefix('admin')->namespace('App\Http\Controllers\admin')->group(function 
         Route::get('/product-status/{office_id}/{product_id}', [ProductStatusController::class, 'filterProductStatus']);
         Route::get('/product-list/{office_id}', [ProductStatusController::class, 'filterProductList']);
 
-        //    Reportsa route start here ---->
+        //------------Reports route start here ---->
         Route::get('/report/status/all-report', [ReportController::class, 'index'])->name('product-status.report');
         Route::get('/report/status/all-report/{office_id}/{product_id}', [ReportController::class, 'filterProductStatus']);
         Route::get('/report/product-list/{office_id}', [ReportController::class, 'filterProductList']);
-        // product moreport/nitor route start here 
+        // ------------product tracking route start here------------> 
         Route::get('/report/product-monitors/all', [ReportController::class, 'getProducts'])->name('product.monitors.all');
         Route::get('/report/product-monitors/{product_id}', [ReportController::class, 'monitor']);
-        //    Reportsa route ends here ---->
+        //------------Reports route ends here ---->
 
-        //    Trtansfer Request route start here ---->
+        // ------------Trtansfer Request route start here ---->
+        //    product issue by head office
         Route::get('/transfer-request/all', [TransferRequestController::class, 'index'])->name('transfer-request.index');
-        Route::get('/transfer-request/issue', [TransferRequestController::class, 'issue'])->name('transfer-request.issue');
+        Route::get('/transfer-request/create', [TransferRequestController::class, 'create'])->name('transfer-request.create');
+
+        // ------------show all Receive form Branch and zonal office ------------>
+        Route::get('/transfer-request/issue', [TransferRequestController::class, 'issue'])->name('transfer-request.issue');  // show all transfer issu form Branch and zonal office 
+
+        //------------see Goods issue from head office------------>
         Route::get('/transfer-request/issued/{id}', [TransferRequestController::class, 'issued'])->name('transfer-request.issued');
         Route::get('/transfer-request/products/{id}', [TransferRequestController::class, 'showProduct']);
         Route::get('/transfer-request-to/products/{id}', [ReceiveRequestController::class, 'ToshowProduct']);
-
         Route::get('/transfer-request/approve/{id}', [ReceiveRequestController::class, 'approved'])->name('transfer-request.approve');
 
-        Route::get('/transfer-request/create', [TransferRequestController::class, 'create'])->name('transfer-request.create');
+       
         Route::post('/transfer-request/store', [TransferRequestController::class, 'store'])->name('transfer-request.store');
         // Route::get('/transfer-request/show/{id}', [TransferRequestController::class, 'show'])->name('transfer-request.show');
         Route::get('/transfer-request/get-data/{id}', [ReceiveRequestController::class, 'getOfficeData']);
