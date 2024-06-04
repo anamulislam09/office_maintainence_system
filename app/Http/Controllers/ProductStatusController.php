@@ -77,42 +77,40 @@ class ProductStatusController extends Controller
     {
         $cat_id = $request->cat_id;
 
+        $productsQuery = DB::table('product_allocates')
+            ->join('products', 'products.id', '=', 'product_allocates.product_id')
+            ->join('categories', 'products.sub_cat_id', '=', 'categories.id')
+            ->leftJoin('product_statuses', function ($join) {
+                $join->on('product_statuses.product_id', '=', 'products.id')
+                    ->whereRaw('product_statuses.id IN (SELECT MAX(id) FROM product_statuses GROUP BY product_id)');
+            })
+            ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)
+            ->where('product_allocates.location', 1)
+            ->select('products.name', 'products.product_code', 'product_allocates.*', 'product_statuses.status', 'categories.name as cat_name');
+
+        if ($cat_id) {
+            $productsQuery->where('products.cat_id', $cat_id);
+        }
+
+        $products = $productsQuery->get();
+
+
         // $latestStatusSubquery = DB::table('product_statuses')
         //     ->select('product_statuses.product_id', 'product_statuses.status')
         //     ->join(DB::raw('(SELECT MAX(id) AS id, product_id FROM product_statuses GROUP BY product_id) AS ps'), 'ps.id', '=', 'product_statuses.id');
-
-        // // Main query to get products along with their latest status
-        // $productsQuery = ProductAllocate::join('products', 'product_allocates.product_id', '=', 'products.id')
+        // $productsQuery = DB::table('product_allocates')
+        //     ->join('products', 'products.id', '=', 'product_allocates.product_id')
         //     ->join('categories', 'products.sub_cat_id', '=', 'categories.id')
         //     ->joinSub($latestStatusSubquery, 'ps2', function ($join) {
         //         $join->on('ps2.product_id', '=', 'products.id');
         //     })
         //     ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)
-        //     ->where('location', 1)
-        //     ->select('product_allocates.*', 'products.*', 'categories.name as cat_name', 'ps2.status');
-
+        //     ->where('product_allocates.location', 1)
+        //     ->select('products.name', 'products.product_code', 'product_allocates.*', 'ps2.status', 'categories.name as cat_name');
         // if ($cat_id) {
         //     $productsQuery->where('products.cat_id', $cat_id);
         // }
-
         // $products = $productsQuery->get();
-
-        $latestStatusSubquery = DB::table('product_statuses')
-            ->select('product_statuses.product_id', 'product_statuses.status')
-            ->join(DB::raw('(SELECT MAX(id) AS id, product_id FROM product_statuses GROUP BY product_id) AS ps'), 'ps.id', '=', 'product_statuses.id');
-        $productsQuery = DB::table('product_allocates')
-            ->join('products', 'products.id', '=', 'product_allocates.product_id')
-            ->join('categories', 'products.sub_cat_id', '=', 'categories.id')
-            ->joinSub($latestStatusSubquery, 'ps2', function ($join) {
-                $join->on('ps2.product_id', '=', 'products.id');
-            })
-            ->where('product_allocates.office_id', Auth::guard('admin')->user()->office_id)
-            ->where('product_allocates.location', 1)
-            ->select('products.name', 'products.product_code', 'product_allocates.*', 'ps2.status', 'categories.name as cat_name');
-        if ($cat_id) {
-            $productsQuery->where('products.cat_id', $cat_id);
-        }
-        $products = $productsQuery->get();
         return response()->json($products, 200);
     }
 

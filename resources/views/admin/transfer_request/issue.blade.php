@@ -38,8 +38,8 @@
                                             <thead>
                                                 <tr>
                                                     <th>Transfer To</th>
-                                                    <th>Created By</th>
-                                                    <th>Issue date</th>
+                                                    <th>Issued By</th>
+                                                    <th>Issued date</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
